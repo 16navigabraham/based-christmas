@@ -3,7 +3,6 @@
 import { useAccount, useReadContract } from 'wagmi';
 import { CHRISTMAS_CAP_ABI, CHRISTMAS_CAP_CONTRACT_ADDRESS } from '~/lib/contracts';
 import { ipfsToHttp } from '~/lib/ipfs';
-import Image from 'next/image';
 import { Download, Gift, Trophy, Camera } from 'lucide-react';
 
 /**
@@ -33,55 +32,40 @@ export function ProfileTab() {
     if (!userStats?.[0]) return;
 
     try {
-      const imageUrl = ipfsToHttp(userStats[0]);
+      // Use Pinata gateway which supports CORS
+      const ipfsHash = userStats[0].replace('ipfs://', '');
+      const imageUrl = `https://gateway.pinata.cloud/ipfs/${ipfsHash}`;
       
-      // Create image element
-      const img = new window.Image();
-      img.crossOrigin = 'anonymous';
-      
-      // Load image
-      await new Promise<void>((resolve, reject) => {
-        img.onload = () => resolve();
-        img.onerror = () => reject(new Error('Failed to load image'));
-        img.src = imageUrl;
+      // Fetch image as blob
+      const response = await fetch(imageUrl, {
+        mode: 'cors',
+        credentials: 'omit'
       });
       
-      // Create canvas and draw image
-      const canvas = document.createElement('canvas');
-      canvas.width = img.naturalWidth;
-      canvas.height = img.naturalHeight;
-      const ctx = canvas.getContext('2d');
-      
-      if (!ctx) {
-        throw new Error('Canvas not supported');
+      if (!response.ok) {
+        throw new Error(`Failed to fetch image: ${response.status}`);
       }
       
-      ctx.drawImage(img, 0, 0);
+      const blob = await response.blob();
       
-      // Convert canvas to blob and download
-      canvas.toBlob((blob) => {
-        if (!blob) {
-          alert('Failed to download image. Please try again.');
-          return;
-        }
-        
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `christmas-pfp-${Date.now()}.png`;
-        link.style.display = 'none';
-        
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        
-        // Cleanup
-        setTimeout(() => URL.revokeObjectURL(url), 100);
-      }, 'image/png', 1.0);
+      // Create download link
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `christmas-pfp-${Date.now()}.png`;
+      link.style.display = 'none';
+      
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      // Cleanup
+      setTimeout(() => URL.revokeObjectURL(url), 100);
       
     } catch (error) {
       console.error('Download failed:', error);
-      alert('Failed to download image. Please try again.');
+      // Don't use alert in sandboxed iframe - just log to console
+      console.warn('Failed to download image. Please try again.');
     }
   };
 
@@ -165,12 +149,10 @@ export function ProfileTab() {
                 Your Festive PFP
               </h2>
               <div className="relative aspect-square rounded-xl overflow-hidden bg-gradient-to-br from-blue-500/20 to-purple-500/20 border border-white/10">
-                <Image
+                <img
                   src={ipfsToHttp(pfpUrl)}
                   alt="Christmas PFP"
-                  fill
-                  className="object-cover"
-                  unoptimized
+                  className="w-full h-full object-cover"
                 />
               </div>
               <button

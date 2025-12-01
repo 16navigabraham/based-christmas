@@ -70,8 +70,8 @@ export function ipfsToHttp(ipfsUrl: string): string {
   
   const cid = ipfsUrl.replace('ipfs://', '');
   
-  // Cloudflare IPFS is fastest and most reliable for Farcaster
-  return `https://cloudflare-ipfs.com/ipfs/${cid}`;
+  // Use Pinata gateway - has better CORS support and reliability for Farcaster
+  return `https://gateway.pinata.cloud/ipfs/${cid}`;
 }
 
 /**
