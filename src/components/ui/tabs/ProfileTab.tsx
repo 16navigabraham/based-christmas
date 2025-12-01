@@ -139,26 +139,13 @@ export function ProfileTab() {
                       return;
                     }
                   } catch (sdkError) {
-                    console.log("Farcaster SDK failed, trying fallback methods...", sdkError);
+                    console.log("Farcaster SDK failed, opening Warpcast...", sdkError);
                   }
 
-                  // Fallback to native share API (works on iOS/Android)
-                  if (navigator.share) {
-                    try {
-                      await navigator.share({
-                        text: castText,
-                        url: imageUrl
-                      });
-                      return;
-                    } catch (shareError) {
-                      console.log("Native share failed, trying URL methods...");
-                    }
-                  }
-
-                  // Final fallback: Open Warpcast compose
+                  // Direct fallback: Open Warpcast compose (works on all platforms)
                   const encodedText = encodeURIComponent(castText);
                   const castUrl = `https://warpcast.com/~/compose?text=${encodedText}&embeds[]=${encodeURIComponent(imageUrl)}`;
-                  window.open(castUrl, '_blank', 'noopener,noreferrer');
+                  window.location.href = castUrl;
                 }}
                 className="w-full mt-4 px-4 py-3 bg-purple-500 hover:bg-purple-600 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
               >
