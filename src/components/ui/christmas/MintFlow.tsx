@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useAccount, useWriteContract, useWaitForTransactionReceipt, useReadContract } from 'wagmi';
 import { CheckCircle2, Loader2, ExternalLink, Download } from 'lucide-react';
+import { sdk } from '@farcaster/miniapp-sdk';
 import { 
   CHRISTMAS_CAP_ABI, 
   CHRISTMAS_CAP_CONTRACT_ADDRESS, 
@@ -289,26 +290,20 @@ export function MintFlow({ originalImage, cappedBlob }: MintFlowProps) {
                   const castText = 'Just minted my Based Christmas PFP! 🎄⛓️ Staying Based on @base';
                   
                   try {
-                    // Try Farcaster SDK first (works in Farcaster app)
-                    if (window.sdk?.actions?.composeCast) {
-                      const result = await window.sdk.actions.composeCast({
-                        text: castText,
-                        embeds: [imageUrl]
-                      });
-                      
-                      if (result?.cast) {
-                        console.log("Cast created successfully! Hash:", result.cast.hash);
-                      }
-                      return;
-                    }
+                    // Use Farcaster SDK - works on iOS and all Farcaster clients
+                    await sdk.actions.composeCast({
+                      text: castText,
+                      embeds: [imageUrl]
+                    });
+                    console.log("Compose cast opened successfully");
                   } catch (sdkError) {
-                    console.log("Farcaster SDK failed, opening Warpcast...", sdkError);
+                    console.error("Farcaster SDK failed, opening Warpcast...", sdkError);
+                    
+                    // Fallback: Open Warpcast compose (for non-Farcaster browsers)
+                    const encodedText = encodeURIComponent(castText);
+                    const castUrl = `https://warpcast.com/~/compose?text=${encodedText}&embeds[]=${encodeURIComponent(imageUrl)}`;
+                    window.location.href = castUrl;
                   }
-
-                  // Direct fallback: Open Warpcast compose (works on all platforms)
-                  const encodedText = encodeURIComponent(castText);
-                  const castUrl = `https://warpcast.com/~/compose?text=${encodedText}&embeds[]=${encodeURIComponent(imageUrl)}`;
-                  window.location.href = castUrl;
                 }}
                 className="btn btn-primary"
               >

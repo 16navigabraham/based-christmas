@@ -5,6 +5,7 @@ import { useAccount, useReadContract } from 'wagmi';
 import { CHRISTMAS_CAP_ABI, CHRISTMAS_CAP_CONTRACT_ADDRESS } from '~/lib/contracts';
 import { ipfsToHttp } from '~/lib/ipfs';
 import { Download, Gift, Trophy, Camera, Share2 } from 'lucide-react';
+import { sdk } from '@farcaster/miniapp-sdk';
 
 /**
  * ProfileTab component displays user's Christmas PFP statistics and gallery.
@@ -126,26 +127,20 @@ export function ProfileTab() {
                   const castText = 'Staying Based this Christmas with my Basemax Cap! 🎄⛓️ Onchain forever on @base';
                   
                   try {
-                    // Try Farcaster SDK first (works in Farcaster app)
-                    if (window.sdk?.actions?.composeCast) {
-                      const result = await window.sdk.actions.composeCast({
-                        text: castText,
-                        embeds: [imageUrl]
-                      });
-                      
-                      if (result?.cast) {
-                        console.log("Cast created successfully! Hash:", result.cast.hash);
-                      }
-                      return;
-                    }
+                    // Use Farcaster SDK - works on iOS and all Farcaster clients
+                    await sdk.actions.composeCast({
+                      text: castText,
+                      embeds: [imageUrl]
+                    });
+                    console.log("Compose cast opened successfully");
                   } catch (sdkError) {
-                    console.log("Farcaster SDK failed, opening Warpcast...", sdkError);
+                    console.error("Farcaster SDK failed, opening Warpcast...", sdkError);
+                    
+                    // Fallback: Open Warpcast compose (for non-Farcaster browsers)
+                    const encodedText = encodeURIComponent(castText);
+                    const castUrl = `https://warpcast.com/~/compose?text=${encodedText}&embeds[]=${encodeURIComponent(imageUrl)}`;
+                    window.location.href = castUrl;
                   }
-
-                  // Direct fallback: Open Warpcast compose (works on all platforms)
-                  const encodedText = encodeURIComponent(castText);
-                  const castUrl = `https://warpcast.com/~/compose?text=${encodedText}&embeds[]=${encodeURIComponent(imageUrl)}`;
-                  window.location.href = castUrl;
                 }}
                 className="w-full mt-4 px-4 py-3 bg-purple-500 hover:bg-purple-600 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
               >
