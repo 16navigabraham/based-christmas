@@ -166,19 +166,35 @@ export function MintFlow({ originalImage, cappedBlob }: MintFlowProps) {
   const handleDownload = async () => {
     try {
       const imageUrl = ipfsToHttp(cappedUrl);
-      const response = await fetch(imageUrl);
+      
+      // Try to fetch with CORS mode
+      const response = await fetch(imageUrl, {
+        mode: 'cors',
+        cache: 'no-cache',
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch image');
+      }
+      
       const blob = await response.blob();
       const url = URL.createObjectURL(blob);
       
       const link = document.createElement('a');
       link.href = url;
       link.download = 'christmas-pfp.png';
+      link.style.display = 'none';
       document.body.appendChild(link);
       link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
+      
+      // Clean up after a delay to ensure download started
+      setTimeout(() => {
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }, 100);
     } catch (error) {
       console.error('Download failed:', error);
+      alert('Download failed. Please try again or check your connection.');
     }
   };
 

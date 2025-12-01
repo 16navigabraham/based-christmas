@@ -29,24 +29,64 @@ export function ProfileTab() {
   });
 
   // Download the PFP image
-  const handleDownload = async () => {
-    if (userStats?.[0]) {
+  const handleSaveOrShare = async () => {
+    if (!userStats?.[0]) return;
+    
+    const imageUrl = ipfsToHttp(userStats[0]);
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    
+    // Try native share on mobile
+    if ((isMobile || navigator.share) && navigator.share) {
       try {
-        const imageUrl = ipfsToHttp(userStats[0]);
-        const response = await fetch(imageUrl);
-        const blob = await response.blob();
-        const url = URL.createObjectURL(blob);
+        await navigator.share({
+          title: 'My Christmas PFP 🎄',
+          text: 'Check out my festive profile picture!',
+          url: imageUrl,
+        });
+        return;
+      } catch (error) {
+        console.error('Native share failed:', error);
+      }
+    }
+    
+    // Fallback to canvas download
+    try {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      
+      await new Promise((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = reject;
+        img.src = imageUrl;
+      });
+      
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      const ctx = canvas.getContext('2d');
+      
+      if (!ctx) throw new Error('Canvas not supported');
+      
+      ctx.drawImage(img, 0, 0);
+      
+      canvas.toBlob((blob) => {
+        if (!blob) {
+          alert('Failed to save image. Please try copying the link instead.');
+          return;
+        }
         
+        const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = 'christmas-pfp.png';
-        document.body.appendChild(link);
+        link.download = `christmas-pfp-${Date.now()}.png`;
         link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-      } catch (error) {
-        console.error('Download failed:', error);
-      }
+        
+        setTimeout(() => URL.revokeObjectURL(url), 100);
+      }, 'image/png');
+      
+    } catch (error) {
+      console.error('Save failed:', error);
+      alert('Failed to save image. Please try again.');
     }
   };
 
@@ -139,7 +179,7 @@ export function ProfileTab() {
                 />
               </div>
               <button
-                onClick={handleDownload}
+                onClick={handleSaveOrShare}
                 className="w-full mt-4 px-4 py-3 bg-blue-500 hover:bg-blue-600 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
               >
                 <Download className="w-4 h-4" />

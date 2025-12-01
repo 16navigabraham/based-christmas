@@ -65,11 +65,13 @@ export async function uploadToIPFS(
  * @returns HTTP gateway URL
  */
 export function ipfsToHttp(ipfsUrl: string): string {
-  if (ipfsUrl.startsWith('ipfs://')) {
-    const hash = ipfsUrl.replace('ipfs://', '');
-    return `${PINATA_GATEWAY}/ipfs/${hash}`;
-  }
-  return ipfsUrl;
+  if (!ipfsUrl) return '';
+  if (ipfsUrl.startsWith('http')) return ipfsUrl;
+  
+  const cid = ipfsUrl.replace('ipfs://', '');
+  
+  // Cloudflare IPFS is fastest and most reliable for Farcaster
+  return `https://cloudflare-ipfs.com/ipfs/${cid}`;
 }
 
 /**
