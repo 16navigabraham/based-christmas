@@ -1,14 +1,60 @@
 "use client";
 
 import { useState } from 'react';
-import { useAccount } from 'wagmi';
+import { useAccount, useConnect } from 'wagmi';
 import { ImageUpload } from '../christmas/ImageUpload';
 import { CapPreview } from '../christmas/CapPreview';
 import { MintFlow } from '../christmas/MintFlow';
 import { UserDashboard } from '../../christmas/UserDashboard';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Wallet } from 'lucide-react';
 
 type FlowStep = 'upload' | 'preview' | 'mint' | 'dashboard';
+
+/**
+ * ConnectWalletSection component for non-connected users
+ */
+function ConnectWalletSection() {
+  const { connect, connectors, isPending } = useConnect();
+
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[40vh] text-center">
+      <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 max-w-md space-y-6">
+        <Wallet className="w-16 h-16 mx-auto text-blue-400" />
+        <div>
+          <p className="text-xl mb-2">Connect your wallet to get started with your festive PFP transformation!</p>
+          <p className="text-sm text-gray-400">You&apos;ll need a wallet with USDC on Base network</p>
+        </div>
+        
+        <div className="space-y-3">
+          {connectors.map((connector) => (
+            <button
+              key={connector.id}
+              onClick={() => connect({ connector })}
+              disabled={isPending}
+              className="w-full px-6 py-3 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-600 disabled:cursor-not-allowed rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+            >
+              {isPending ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  Connecting...
+                </>
+              ) : (
+                <>
+                  <Wallet className="w-4 h-4" />
+                  Connect with {connector.name}
+                </>
+              )}
+            </button>
+          ))}
+        </div>
+        
+        <p className="text-xs text-gray-500">
+          Supports Coinbase Wallet, MetaMask, and Farcaster Frame
+        </p>
+      </div>
+    </div>
+  );
+}
 
 /**
  * HomeTab component displays the Christmas Cap PFP mini app.
@@ -53,12 +99,7 @@ export function HomeTab() {
       </div>
 
       {!isConnected ? (
-        <div className="flex flex-col items-center justify-center min-h-[40vh] text-center">
-          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 max-w-md">
-            <p className="text-xl mb-6">Connect your wallet to get started with your festive PFP transformation!</p>
-            <p className="text-sm text-gray-400">You&apos;ll need a wallet with USDC on Base network</p>
-          </div>
-        </div>
+        <ConnectWalletSection />
       ) : (
         <div className="space-y-8">
           {/* Main Flow */}

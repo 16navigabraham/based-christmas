@@ -200,32 +200,6 @@ export function ProfileTab() {
               </p>
             </div>
 
-            {/* Stats Summary */}
-            <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6">
-              <h3 className="text-lg font-bold mb-4">Quick Stats</h3>
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-400">Points per mint</span>
-                  <span className="font-bold text-blue-400">2 pts</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-400">Cost per mint</span>
-                  <span className="font-bold text-green-400">0.1 USDC</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-400">Your latest PFP</span>
-                  <span className="font-bold text-white">On-chain</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Wallet Info */}
-            <div className="bg-blue-500/5 border border-blue-500/20 rounded-xl p-4">
-              <p className="text-xs text-gray-400 mb-1">Your Wallet</p>
-              <p className="text-sm font-mono text-blue-400">
-                {address ? `${address.slice(0, 6)}...${address.slice(-4)}` : ''}
-              </p>
-            </div>
           </div>
         </div>
       )}
