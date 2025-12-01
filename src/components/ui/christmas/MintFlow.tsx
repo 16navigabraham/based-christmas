@@ -271,14 +271,44 @@ export function MintFlow({ originalImage, cappedBlob }: MintFlowProps) {
 
             <div className="flex gap-3 justify-center">
               <button
-                onClick={() => {
+                onClick={async () => {
                   const imageUrl = ipfsToHttp(cappedUrl);
-                  if (window.sdk?.actions.composeCast) {
-                    window.sdk.actions.composeCast({
-                      text: 'Just minted my Based Christmas PFP! 🎄⛓️ Staying Based on @base',
-                      embeds: [imageUrl]
-                    });
+                  const castText = 'Just minted my Based Christmas PFP! 🎄⛓️ Staying Based on @base';
+                  
+                  try {
+                    // Try Farcaster SDK first (works in Farcaster app)
+                    if (window.sdk?.actions?.composeCast) {
+                      const result = await window.sdk.actions.composeCast({
+                        text: castText,
+                        embeds: [imageUrl]
+                      });
+                      
+                      if (result?.cast) {
+                        console.log("Cast created successfully! Hash:", result.cast.hash);
+                      }
+                      return;
+                    }
+                  } catch (sdkError) {
+                    console.log("Farcaster SDK failed, trying fallback methods...", sdkError);
                   }
+
+                  // Fallback to native share API (works on iOS/Android)
+                  if (navigator.share) {
+                    try {
+                      await navigator.share({
+                        text: castText,
+                        url: imageUrl
+                      });
+                      return;
+                    } catch (shareError) {
+                      console.log("Native share failed, trying URL methods...");
+                    }
+                  }
+
+                  // Final fallback: Open Warpcast compose
+                  const encodedText = encodeURIComponent(castText);
+                  const castUrl = `https://warpcast.com/~/compose?text=${encodedText}&embeds[]=${encodeURIComponent(imageUrl)}`;
+                  window.open(castUrl, '_blank', 'noopener,noreferrer');
                 }}
                 className="btn btn-primary"
               >

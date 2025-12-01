@@ -6,7 +6,11 @@ declare global {
         composeCast: (params: {
           text: string;
           embeds: string[];
-        }) => void;
+        }) => Promise<{
+          cast?: {
+            hash: string;
+          };
+        }>;
       };
     };
   }
