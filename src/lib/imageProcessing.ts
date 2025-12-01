@@ -70,7 +70,7 @@ export async function addChristmasCapToImage(
       return;
     }
 
-    const img = new Image();
+    const img = new window.Image();
     
     img.onload = async () => {
       // Set canvas size to match image
@@ -88,7 +88,7 @@ export async function addChristmasCapToImage(
       const position = detectCapPosition(ctx, imageData, size);
 
       // Load and draw the Christmas cap
-      const cap = new Image();
+      const cap = new window.Image();
       cap.onload = () => {
         // Calculate cap size and position using AI detection
         const capWidth = size * position.scale;
@@ -146,7 +146,7 @@ export async function addChristmasCapToImageWithPosition(
       return;
     }
 
-    const img = new Image();
+    const img = new window.Image();
     
     img.onload = async () => {
       // Set canvas size to match image
@@ -160,7 +160,7 @@ export async function addChristmasCapToImageWithPosition(
       ctx.drawImage(img, sx, sy, size, size, 0, 0, size, size);
 
       // Load and draw the Christmas cap
-      const cap = new Image();
+      const cap = new window.Image();
       cap.onload = () => {
         // Calculate cap size and position
         const capWidth = size * capScale;

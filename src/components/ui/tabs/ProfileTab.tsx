@@ -28,50 +28,40 @@ export function ProfileTab() {
     },
   });
 
-  // Download the PFP image
+  // Download the PFP image - optimized for Farcaster mini apps
   const handleSaveOrShare = async () => {
     if (!userStats?.[0]) return;
-    
-    const imageUrl = ipfsToHttp(userStats[0]);
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    
-    // Try native share on mobile
-    if ((isMobile || navigator.share) && navigator.share) {
-      try {
-        await navigator.share({
-          title: 'My Christmas PFP 🎄',
-          text: 'Check out my festive profile picture!',
-          url: imageUrl,
-        });
-        return;
-      } catch (error) {
-        console.error('Native share failed:', error);
-      }
-    }
-    
-    // Fallback to canvas download
+
     try {
-      const img = new Image();
+      const imageUrl = ipfsToHttp(userStats[0]);
+      
+      // Create image element
+      const img = new window.Image();
       img.crossOrigin = 'anonymous';
       
-      await new Promise((resolve, reject) => {
-        img.onload = resolve;
-        img.onerror = reject;
+      // Load image
+      await new Promise<void>((resolve, reject) => {
+        img.onload = () => resolve();
+        img.onerror = () => reject(new Error('Failed to load image'));
         img.src = imageUrl;
       });
       
+      // Create canvas and draw image
       const canvas = document.createElement('canvas');
       canvas.width = img.naturalWidth;
       canvas.height = img.naturalHeight;
       const ctx = canvas.getContext('2d');
       
-      if (!ctx) throw new Error('Canvas not supported');
+      if (!ctx) {
+        throw new Error('Canvas not supported');
+      }
       
       ctx.drawImage(img, 0, 0);
       
+      // Convert canvas to blob and download
       canvas.toBlob((blob) => {
         if (!blob) {
-          alert('Failed to save image. Please try copying the link instead.');
+          alert('Failed to download image. Please try again.');
           return;
         }
         
@@ -79,14 +69,19 @@ export function ProfileTab() {
         const link = document.createElement('a');
         link.href = url;
         link.download = `christmas-pfp-${Date.now()}.png`;
-        link.click();
+        link.style.display = 'none';
         
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Cleanup
         setTimeout(() => URL.revokeObjectURL(url), 100);
-      }, 'image/png');
+      }, 'image/png', 1.0);
       
     } catch (error) {
-      console.error('Save failed:', error);
-      alert('Failed to save image. Please try again.');
+      console.error('Download failed:', error);
+      alert('Failed to download image. Please try again.');
     }
   };
 

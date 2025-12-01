@@ -77,14 +77,14 @@ export function HomeTab() {
                   originalImage={originalImage} 
                   onProcessed={handleProcessed}
                 />
-                {cappedBlob && (
-                  <div className="flex gap-3 justify-center">
-                    <button
-                      onClick={handleStartOver}
-                      className="px-6 py-3 bg-white/10 hover:bg-white/20 rounded-lg font-medium transition-colors"
-                    >
-                      Start Over
-                    </button>
+                <div className="flex gap-3 justify-center">
+                  <button
+                    onClick={handleStartOver}
+                    className="px-6 py-3 bg-white/10 hover:bg-white/20 rounded-lg font-medium transition-colors"
+                  >
+                    Start Over
+                  </button>
+                  {cappedBlob && (
                     <button
                       onClick={handleProceedToMint}
                       className="px-6 py-3 bg-blue-500 hover:bg-blue-600 rounded-lg font-medium transition-colors flex items-center gap-2"
@@ -92,8 +92,8 @@ export function HomeTab() {
                       Proceed to Mint
                       <ArrowRight className="w-4 h-4" />
                     </button>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             )}
 

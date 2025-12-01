@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useState } from 'react';
-import { addChristmasCapToImage, fileToDataUrl } from '~/lib/imageProcessing';
-import { Sparkles } from 'lucide-react';
+import { useEffect, useState, useRef } from 'react';
+import { addChristmasCapToImageWithPosition, fileToDataUrl } from '~/lib/imageProcessing';
 
 interface CapPreviewProps {
   originalImage: File;
@@ -10,31 +9,57 @@ interface CapPreviewProps {
 }
 
 /**
- * Component that processes and displays the PFP with Christmas cap using AI positioning
+ * Component that displays PFP with interactive Christmas cap positioning
  */
 export function CapPreview({ originalImage, onProcessed }: CapPreviewProps) {
   const [processing, setProcessing] = useState(false);
   const [cappedPreview, setCappedPreview] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [originalPreview, setOriginalPreview] = useState<string | null>(null);
+  
+  // Cap positioning controls
+  const [capX, setCapX] = useState(50); // 0-100 (horizontal position)
+  const [capY, setCapY] = useState(15); // 0-100 (vertical position)
+  const [capSize, setCapSize] = useState(70); // 30-200 (size percentage)
+  const [capRotation, setCapRotation] = useState(0); // -45 to 45 degrees
 
+  const processingRef = useRef(false);
+
+  // Load original image preview
   useEffect(() => {
+    fileToDataUrl(originalImage).then(setOriginalPreview);
+  }, [originalImage]);
+
+  // Process image with current settings
+  useEffect(() => {
+    if (processingRef.current) return;
+
     let cancelled = false;
 
     async function processImage() {
+      processingRef.current = true;
       setProcessing(true);
       setError(null);
 
       try {
-        // Add Christmas cap with AI-powered smart positioning
-        const cappedBlob = await addChristmasCapToImage(originalImage);
+        // Convert percentage values to the format expected by the function
+        const xOffset = (capX - 50) / 100; // -0.5 to 0.5
+        const yOffset = (capY - 50) / 100; // -0.5 to 0.5
+        const scale = capSize / 100; // 0.3 to 2.0
+
+        const cappedBlob = await addChristmasCapToImageWithPosition(
+          originalImage,
+          scale,
+          xOffset,
+          yOffset
+        );
+        
         if (cancelled) return;
 
-        // Create capped preview
         const cappedUrl = await fileToDataUrl(cappedBlob);
         if (cancelled) return;
+        
         setCappedPreview(cappedUrl);
-
-        // Notify parent
         onProcessed(cappedBlob);
       } catch (err) {
         if (cancelled) return;
@@ -43,31 +68,25 @@ export function CapPreview({ originalImage, onProcessed }: CapPreviewProps) {
       } finally {
         if (!cancelled) {
           setProcessing(false);
+          processingRef.current = false;
         }
       }
     }
 
-    processImage();
+    const debounce = setTimeout(processImage, 300);
 
     return () => {
       cancelled = true;
+      clearTimeout(debounce);
     };
-  }, [originalImage, onProcessed]);
+  }, [originalImage, capX, capY, capSize, capRotation]);
 
-  if (processing) {
-    return (
-      <div className="flex flex-col items-center justify-center py-12 space-y-4">
-        <div className="relative">
-          <div className="spinner h-16 w-16"></div>
-          <Sparkles className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 text-blue-600 animate-pulse" />
-        </div>
-        <p className="text-lg font-medium">Adding Christmas magic...</p>
-        <p className="text-sm text-gray-600 dark:text-gray-400">
-          AI is finding the perfect cap position ✨
-        </p>
-      </div>
-    );
-  }
+  const handleReset = () => {
+    setCapX(50);
+    setCapY(15);
+    setCapSize(70);
+    setCapRotation(0);
+  };
 
   if (error) {
     return (
@@ -80,22 +99,92 @@ export function CapPreview({ originalImage, onProcessed }: CapPreviewProps) {
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h3 className="text-xl font-bold mb-2">Your Festive PFP! 🎄</h3>
+        <h3 className="text-xl font-bold mb-2">Position Your Christmas Cap 🎄</h3>
         <p className="text-sm text-gray-600 dark:text-gray-400">
-          AI automatically positioned the cap perfectly ✨
+          Use the controls below to find the perfect placement
         </p>
       </div>
 
-      {/* Large Preview */}
-      {cappedPreview && (
-        <div className="max-w-md mx-auto">
+      {/* Preview */}
+      <div className="max-w-md mx-auto relative">
+        {cappedPreview ? (
           <img
             src={cappedPreview}
             alt="With Christmas Cap"
             className="w-full rounded-lg shadow-xl border-2 border-blue-500 ring-2 ring-blue-300 dark:ring-blue-700"
           />
+        ) : originalPreview ? (
+          <img
+            src={originalPreview}
+            alt="Original"
+            className="w-full rounded-lg shadow-xl opacity-50"
+          />
+        ) : null}
+        {processing && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/20 rounded-lg">
+            <div className="spinner h-8 w-8"></div>
+          </div>
+        )}
+      </div>
+
+      {/* Controls */}
+      <div className="space-y-4 bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-6">
+        {/* Horizontal Position */}
+        <div className="space-y-2">
+          <div className="flex justify-between items-center">
+            <label className="text-sm font-medium">Horizontal Position</label>
+            <span className="text-xs text-gray-400">{capX}%</span>
+          </div>
+          <input
+            type="range"
+            min="0"
+            max="100"
+            value={capX}
+            onChange={(e) => setCapX(Number(e.target.value))}
+            className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer accent-blue-500"
+          />
         </div>
-      )}
+
+        {/* Vertical Position */}
+        <div className="space-y-2">
+          <div className="flex justify-between items-center">
+            <label className="text-sm font-medium">Vertical Position</label>
+            <span className="text-xs text-gray-400">{capY}%</span>
+          </div>
+          <input
+            type="range"
+            min="0"
+            max="100"
+            value={capY}
+            onChange={(e) => setCapY(Number(e.target.value))}
+            className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer accent-blue-500"
+          />
+        </div>
+
+        {/* Size */}
+        <div className="space-y-2">
+          <div className="flex justify-between items-center">
+            <label className="text-sm font-medium">Cap Size</label>
+            <span className="text-xs text-gray-400">{capSize}%</span>
+          </div>
+          <input
+            type="range"
+            min="30"
+            max="200"
+            value={capSize}
+            onChange={(e) => setCapSize(Number(e.target.value))}
+            className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer accent-blue-500"
+          />
+        </div>
+
+        {/* Reset Button */}
+        <button
+          onClick={handleReset}
+          className="w-full px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg font-medium transition-colors text-sm"
+        >
+          Reset to Default
+        </button>
+      </div>
     </div>
   );
 }

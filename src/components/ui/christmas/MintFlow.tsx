@@ -162,39 +162,58 @@ export function MintFlow({ originalImage, cappedBlob }: MintFlowProps) {
     }
   };
 
-  // Download image
+  // Download image - optimized for Farcaster mini apps
   const handleDownload = async () => {
     try {
       const imageUrl = ipfsToHttp(cappedUrl);
       
-      // Try to fetch with CORS mode
-      const response = await fetch(imageUrl, {
-        mode: 'cors',
-        cache: 'no-cache',
+      // Create image element
+      const img = new window.Image();
+      img.crossOrigin = 'anonymous';
+      
+      // Load image
+      await new Promise<void>((resolve, reject) => {
+        img.onload = () => resolve();
+        img.onerror = () => reject(new Error('Failed to load image'));
+        img.src = imageUrl;
       });
       
-      if (!response.ok) {
-        throw new Error('Failed to fetch image');
+      // Create canvas and draw image
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      const ctx = canvas.getContext('2d');
+      
+      if (!ctx) {
+        throw new Error('Canvas not supported');
       }
       
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
+      ctx.drawImage(img, 0, 0);
       
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = 'christmas-pfp.png';
-      link.style.display = 'none';
-      document.body.appendChild(link);
-      link.click();
-      
-      // Clean up after a delay to ensure download started
-      setTimeout(() => {
+      // Convert canvas to blob and download
+      canvas.toBlob((blob) => {
+        if (!blob) {
+          alert('Failed to download image. Please try again.');
+          return;
+        }
+        
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `christmas-pfp-${Date.now()}.png`;
+        link.style.display = 'none';
+        
+        document.body.appendChild(link);
+        link.click();
         document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-      }, 100);
+        
+        // Cleanup
+        setTimeout(() => URL.revokeObjectURL(url), 100);
+      }, 'image/png', 1.0);
+      
     } catch (error) {
       console.error('Download failed:', error);
-      alert('Download failed. Please try again or check your connection.');
+      alert('Failed to download image. Please try again.');
     }
   };
 
