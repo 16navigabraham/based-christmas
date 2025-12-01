@@ -14,7 +14,9 @@
  * The base URL of the application.
  * Used for generating absolute URLs for assets and API endpoints.
  */
-export const APP_URL: string = process.env.NEXT_PUBLIC_URL!;
+export const APP_URL: string = 
+  process.env.NEXT_PUBLIC_URL || 
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://based-christmas.vercel.app');
 
 /**
  * The name of the mini app as displayed to users.
@@ -26,7 +28,7 @@ export const APP_NAME: string = 'Based-christmas';
  * A brief description of the mini app's functionality.
  * Used in app store listings and metadata.
  */
-export const APP_DESCRIPTION: string = '';
+export const APP_DESCRIPTION: string = ' Add the Basemax Cap to Your PFP 🎄';
 
 /**
  * The primary category for the mini app.
@@ -85,7 +87,7 @@ export const APP_ACCOUNT_ASSOCIATION: { header: string; payload: string; signatu
  * Text displayed on the main action button.
  * Used for the primary call-to-action in the mini app.
  */
-export const APP_BUTTON_TEXT: string = ' Add the Basemax Cap to Your PFP 🎄';
+export const APP_BUTTON_TEXT: string = ' Add Basemax Cap to Your PFP 🎄';
 
 // --- Integration Configuration ---
 /**

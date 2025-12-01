@@ -36,10 +36,10 @@ export async function addChristmasCapToImage(
       const cap = new Image();
       cap.onload = () => {
         // Calculate cap size and position (top center)
-        const capWidth = size * 0.6; // Cap is 60% of image width
-        const capHeight = capWidth * 0.75; // Maintain aspect ratio
+        const capWidth = size * 0.7; // Cap is 70% of image width
+        const capHeight = capWidth * 0.8; // Maintain aspect ratio
         const capX = (size - capWidth) / 2;
-        const capY = -capHeight * 0.3; // Position at top with slight overlap
+        const capY = -capHeight * 0.4; // Position at top with better overlap
 
         ctx.drawImage(cap, capX, capY, capWidth, capHeight);
 
@@ -57,7 +57,79 @@ export async function addChristmasCapToImage(
         reject(new Error('Failed to load Christmas cap'));
       };
 
-      cap.src = '/christmas-cap.svg';
+      cap.src = '/christmas-cap.png';
+    };
+
+    img.onerror = () => {
+      reject(new Error('Failed to load image'));
+    };
+
+    img.src = URL.createObjectURL(imageFile);
+  });
+}
+
+/**
+ * Adds a blue Christmas cap overlay to an uploaded image with custom position
+ * @param imageFile - The uploaded image file
+ * @param capScale - Scale of the cap (0.5 to 1.5, default 0.7)
+ * @param capX - X position offset (-0.5 to 0.5, default 0)
+ * @param capY - Y position offset (-0.5 to 0.5, default -0.4)
+ * @returns Promise resolving to a Blob of the processed image
+ */
+export async function addChristmasCapToImageWithPosition(
+  imageFile: File,
+  capScale: number = 0.7,
+  capX: number = 0,
+  capY: number = -0.4
+): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    if (!ctx) {
+      reject(new Error('Could not get canvas context'));
+      return;
+    }
+
+    const img = new Image();
+    
+    img.onload = async () => {
+      // Set canvas size to match image
+      const size = Math.min(img.width, img.height);
+      canvas.width = size;
+      canvas.height = size;
+
+      // Draw the original image (cropped to square if needed)
+      const sx = (img.width - size) / 2;
+      const sy = (img.height - size) / 2;
+      ctx.drawImage(img, sx, sy, size, size, 0, 0, size, size);
+
+      // Load and draw the Christmas cap
+      const cap = new Image();
+      cap.onload = () => {
+        // Calculate cap size and position
+        const capWidth = size * capScale;
+        const capHeight = capWidth * 0.8;
+        const posX = (size - capWidth) / 2 + (capX * size);
+        const posY = (capY * size);
+
+        ctx.drawImage(cap, posX, posY, capWidth, capHeight);
+
+        // Convert canvas to blob
+        canvas.toBlob((blob) => {
+          if (blob) {
+            resolve(blob);
+          } else {
+            reject(new Error('Failed to create image blob'));
+          }
+        }, 'image/png');
+      };
+
+      cap.onerror = () => {
+        reject(new Error('Failed to load Christmas cap'));
+      };
+
+      cap.src = '/christmas-cap.png';
     };
 
     img.onerror = () => {
