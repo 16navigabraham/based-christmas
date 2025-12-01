@@ -10,21 +10,14 @@ export async function GET(request: NextRequest) {
 
   const user = fid ? await getNeynarUser(Number(fid)) : null;
 
-  return new ImageResponse(
-    (
-      <div tw="flex h-full w-full flex-col justify-center items-center relative bg-primary">
-        {user?.pfp_url && (
-          <div tw="flex w-96 h-96 rounded-full overflow-hidden mb-8 border-8 border-white">
-            <img src={user.pfp_url} alt="Profile" tw="w-full h-full object-cover" />
-          </div>
-        )}
-        <h1 tw="text-8xl text-white">{user?.display_name ? `Hello from ${user.display_name ?? user.username}!` : 'Hello!'}</h1>
-        <p tw="text-5xl mt-4 text-white opacity-80">Powered by Neynar 🪐</p>
-      </div>
-    ),
-    {
-      width: 1200,
-      height: 800,
-    }
-  );
+  // Serve the static image from the public folder
+  const screenshotUrl = new URL('/Screenshot.png', request.url);
+  const screenshotRes = await fetch(screenshotUrl);
+  if (!screenshotRes.ok) {
+    return new Response('Screenshot not found', { status: 404 });
+  }
+  const arrayBuffer = await screenshotRes.arrayBuffer();
+  return new Response(arrayBuffer, {
+    headers: { 'Content-Type': 'image/png' },
+  });
 }
