@@ -4,16 +4,14 @@ import { useEffect } from "react";
 import { useMiniApp } from "@neynar/react";
 import { Header } from "~/components/ui/Header";
 import { Footer } from "~/components/ui/Footer";
-import { HomeTab, ActionsTab, ContextTab, WalletTab } from "~/components/ui/tabs";
+import { HomeTab, ProfileTab } from "~/components/ui/tabs";
 import { USE_WALLET } from "~/lib/constants";
 import { useNeynarUser } from "../hooks/useNeynarUser";
 
 // --- Types ---
 export enum Tab {
   Home = "home",
-  Actions = "actions",
-  Context = "context",
-  Wallet = "wallet",
+  Profile = "profile",
 }
 
 export interface AppProps {
@@ -35,7 +33,7 @@ export interface AppProps {
  * experience with multiple tabs for different functionality areas.
  * 
  * Features:
- * - Tab-based navigation (Home, Actions, Context, Wallet)
+ * - Tab-based navigation (Home, Profile)
  * - Farcaster mini app integration
  * - Wallet connection management
  * - Error handling and display
@@ -110,12 +108,10 @@ export default function App(
 
         {/* Tab content rendering */}
         {currentTab === Tab.Home && <HomeTab />}
-        {currentTab === Tab.Actions && <ActionsTab />}
-        {currentTab === Tab.Context && <ContextTab />}
-        {currentTab === Tab.Wallet && <WalletTab />}
+        {currentTab === Tab.Profile && <ProfileTab />}
 
         {/* Footer with navigation */}
-        <Footer activeTab={currentTab as Tab} setActiveTab={setActiveTab} showWallet={USE_WALLET} />
+        <Footer activeTab={currentTab as Tab} setActiveTab={setActiveTab} />
       </div>
     </div>
   );

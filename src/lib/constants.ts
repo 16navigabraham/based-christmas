@@ -26,7 +26,7 @@ export const APP_NAME: string = 'Based-christmas';
  * A brief description of the mini app's functionality.
  * Used in app store listings and metadata.
  */
-export const APP_DESCRIPTION: string = 'mint your based christmas PFP onchain';
+export const APP_DESCRIPTION: string = '';
 
 /**
  * The primary category for the mini app.
@@ -85,7 +85,7 @@ export const APP_ACCOUNT_ASSOCIATION: { header: string; payload: string; signatu
  * Text displayed on the main action button.
  * Used for the primary call-to-action in the mini app.
  */
-export const APP_BUTTON_TEXT: string = 'mint your Based christmas PFP';
+export const APP_BUTTON_TEXT: string = ' Add the Basemax Cap to Your PFP 🎄';
 
 // --- Integration Configuration ---
 /**
