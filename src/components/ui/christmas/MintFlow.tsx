@@ -163,11 +163,23 @@ export function MintFlow({ originalImage, cappedBlob }: MintFlowProps) {
   };
 
   // Download image
-  const handleDownload = () => {
-    const link = document.createElement('a');
-    link.href = ipfsToHttp(cappedUrl);
-    link.download = 'christmas-pfp.png';
-    link.click();
+  const handleDownload = async () => {
+    try {
+      const imageUrl = ipfsToHttp(cappedUrl);
+      const response = await fetch(imageUrl);
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'christmas-pfp.png';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Download failed:', error);
+    }
   };
 
   const isProcessing = isApproving || isApproveTxLoading || isMinting || isMintTxLoading;

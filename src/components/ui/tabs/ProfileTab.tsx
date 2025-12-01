@@ -29,12 +29,24 @@ export function ProfileTab() {
   });
 
   // Download the PFP image
-  const handleDownload = () => {
+  const handleDownload = async () => {
     if (userStats?.[0]) {
-      const link = document.createElement('a');
-      link.href = ipfsToHttp(userStats[0]);
-      link.download = 'christmas-pfp.png';
-      link.click();
+      try {
+        const imageUrl = ipfsToHttp(userStats[0]);
+        const response = await fetch(imageUrl);
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'christmas-pfp.png';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      } catch (error) {
+        console.error('Download failed:', error);
+      }
     }
   };
 
@@ -135,13 +147,7 @@ export function ProfileTab() {
               </button>
             </div>
 
-            {/* IPFS Info */}
-            <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-4">
-              <p className="text-xs text-gray-400 mb-2">Stored on IPFS</p>
-              <p className="text-xs font-mono text-blue-400 break-all">
-                {pfpUrl}
-              </p>
-            </div>
+
           </div>
 
           {/* Stats Display */}
@@ -206,24 +212,24 @@ export function ProfileTab() {
 
       {/* Additional Info Section */}
       <div className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-white/10 rounded-2xl p-6">
-        <h3 className="text-xl font-bold mb-4">🎁 About Your Christmas PFP</h3>
+        <h3 className="text-xl font-bold mb-4">🎁 Make This Christmas Special</h3>
         <div className="grid md:grid-cols-3 gap-4 text-sm">
           <div className="space-y-2">
-            <div className="text-blue-400 font-semibold">✨ On-Chain Storage</div>
+            <div className="text-blue-400 font-semibold">✨ Forever Festive</div>
             <p className="text-gray-400">
-              Your PFP is permanently stored on the Base blockchain
+              Your Christmas moment lives forever on the blockchain - no wrapping paper required!
             </p>
           </div>
           <div className="space-y-2">
-            <div className="text-purple-400 font-semibold">🔗 IPFS Hosting</div>
+            <div className="text-purple-400 font-semibold">🎄 Spread The Joy</div>
             <p className="text-gray-400">
-              Images are hosted on IPFS for decentralized access
+              Download and share your festive PFP across all your social profiles
             </p>
           </div>
           <div className="space-y-2">
-            <div className="text-green-400 font-semibold">🎯 Earn Points</div>
+            <div className="text-green-400 font-semibold">🎯 Collect Rewards</div>
             <p className="text-gray-400">
-              Collect 2 points with every PFP you mint
+              Stack up points with each mint - the more festive, the merrier!
             </p>
           </div>
         </div>

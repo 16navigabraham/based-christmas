@@ -115,9 +115,6 @@ export function HomeTab() {
               </div>
             )}
           </div>
-
-          {/* User Dashboard */}
-          {address && <UserDashboard address={address} />}
         </div>
       )}
     </div>

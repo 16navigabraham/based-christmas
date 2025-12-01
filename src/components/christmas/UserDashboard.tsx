@@ -78,7 +78,6 @@ export function UserDashboard({ address }: UserDashboardProps) {
                 </div>
               </div>
               
-              <p className="text-sm text-gray-400 mb-4 break-all">{pfpUrl}</p>
               <div className="flex gap-2 flex-wrap">
                 <a
                   href={pfpUrl}
