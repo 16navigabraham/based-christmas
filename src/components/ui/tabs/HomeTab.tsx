@@ -26,30 +26,47 @@ function ConnectWalletSection() {
         </div>
         
         <div className="space-y-3">
-          {connectors.map((connector) => (
-            <button
-              key={connector.id}
-              onClick={() => connect({ connector })}
-              disabled={isPending}
-              className="w-full px-6 py-3 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-600 disabled:cursor-not-allowed rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
-            >
-              {isPending ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                  Connecting...
-                </>
-              ) : (
-                <>
-                  <Wallet className="w-4 h-4" />
-                  Connect with {connector.name}
-                </>
-              )}
-            </button>
-          ))}
+          {connectors.map((connector) => {
+            // Skip Farcaster Frame connector in browser
+            if (connector.name === 'Farcaster Frame') {
+              return null;
+            }
+            return (
+              <button
+                key={connector.id}
+                onClick={() => connect({ connector })}
+                disabled={isPending}
+                className="w-full px-6 py-3 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-600 disabled:cursor-not-allowed rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+              >
+                {isPending ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    Connecting...
+                  </>
+                ) : (
+                  <>
+                    <Wallet className="w-4 h-4" />
+                    Connect with {connector.name}
+                  </>
+                )}
+              </button>
+            );
+          })}
+          
+          {/* Open in Farcaster button */}
+          <a
+            href="https://farcaster.xyz/miniapps/Rh6KUvzlHqMp/based-christmas"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full px-6 py-3 bg-purple-500 hover:bg-purple-600 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+          >
+            <Wallet className="w-4 h-4" />
+            Open in Farcaster
+          </a>
         </div>
         
         <p className="text-xs text-gray-500">
-          Supports Coinbase Wallet, MetaMask, and Farcaster Frame
+          Supports Coinbase Wallet, MetaMask, and Farcaster
         </p>
       </div>
     </div>
