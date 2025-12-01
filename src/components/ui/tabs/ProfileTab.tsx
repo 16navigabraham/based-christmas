@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from 'react';
 import { useAccount, useReadContract } from 'wagmi';
 import { CHRISTMAS_CAP_ABI, CHRISTMAS_CAP_CONTRACT_ADDRESS } from '~/lib/contracts';
 import { ipfsToHttp } from '~/lib/ipfs';
