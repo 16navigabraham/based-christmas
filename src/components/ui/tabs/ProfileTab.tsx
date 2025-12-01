@@ -27,45 +27,47 @@ export function ProfileTab() {
     },
   });
 
-  // Download the PFP image - optimized for Farcaster mini apps
+  // Download the PFP image - simple fetch approach like Python requests.get()
   const handleSaveOrShare = async () => {
     if (!userStats?.[0]) return;
 
     try {
-      // Use Pinata gateway which supports CORS
+      // Extract IPFS hash and build Pinata URL
       const ipfsHash = userStats[0].replace('ipfs://', '');
       const imageUrl = `https://gateway.pinata.cloud/ipfs/${ipfsHash}`;
       
-      // Fetch image as blob
-      const response = await fetch(imageUrl, {
-        mode: 'cors',
-        credentials: 'omit'
-      });
+      console.log('Downloading from:', imageUrl);
       
+      // Simple fetch (like Python requests.get)
+      const response = await fetch(imageUrl);
+      
+      // Check status (like Python: if response.status_code == 200)
       if (!response.ok) {
-        throw new Error(`Failed to fetch image: ${response.status}`);
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
       
+      // Get blob (like Python: response.content)
       const blob = await response.blob();
+      console.log('Downloaded blob:', blob.size, 'bytes');
       
-      // Create download link
+      // Create download (like Python: with open(filename, 'wb'))
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
       link.download = `christmas-pfp-${Date.now()}.png`;
-      link.style.display = 'none';
-      
       document.body.appendChild(link);
       link.click();
-      document.body.removeChild(link);
       
       // Cleanup
-      setTimeout(() => URL.revokeObjectURL(url), 100);
+      setTimeout(() => {
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }, 100);
+      
+      console.log('Download initiated successfully');
       
     } catch (error) {
       console.error('Download failed:', error);
-      // Don't use alert in sandboxed iframe - just log to console
-      console.warn('Failed to download image. Please try again.');
     }
   };
 

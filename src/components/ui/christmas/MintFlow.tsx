@@ -162,43 +162,29 @@ export function MintFlow({ originalImage, cappedBlob }: MintFlowProps) {
     }
   };
 
-  // Download image - optimized for Farcaster mini apps
-  const handleDownload = async () => {
+  // Download image - use local blob directly (no IPFS fetch needed!)
+  const handleDownload = () => {
     try {
-      // Use Pinata gateway which supports CORS
-      const ipfsHash = cappedUrl.replace('ipfs://', '');
-      const imageUrl = `https://gateway.pinata.cloud/ipfs/${ipfsHash}`;
+      console.log('Downloading local blob:', cappedBlob.size, 'bytes');
       
-      // Fetch image as blob
-      const response = await fetch(imageUrl, {
-        mode: 'cors',
-        credentials: 'omit'
-      });
-      
-      if (!response.ok) {
-        throw new Error(`Failed to fetch image: ${response.status}`);
-      }
-      
-      const blob = await response.blob();
-      
-      // Create download link
-      const url = URL.createObjectURL(blob);
+      // Create download link from the blob we already have
+      const url = URL.createObjectURL(cappedBlob);
       const link = document.createElement('a');
       link.href = url;
       link.download = `christmas-pfp-${Date.now()}.png`;
-      link.style.display = 'none';
-      
       document.body.appendChild(link);
       link.click();
-      document.body.removeChild(link);
       
       // Cleanup
-      setTimeout(() => URL.revokeObjectURL(url), 100);
+      setTimeout(() => {
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }, 100);
+      
+      console.log('Download initiated successfully');
       
     } catch (error) {
       console.error('Download failed:', error);
-      // Don't use alert in sandboxed iframe - just log to console
-      console.warn('Download failed. Please try again.');
     }
   };
 
