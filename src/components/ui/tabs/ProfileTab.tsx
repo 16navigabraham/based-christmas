@@ -28,11 +28,10 @@ export function ProfileTab() {
     },
   });
 
-  // Show download instructions
-  const [showDownloadView, setShowDownloadView] = useState(false);
-
   const handleSaveOrShare = () => {
-    setShowDownloadView(true);
+    if (!userStats || !userStats[0]) return;
+    const imageUrl = ipfsToHttp(userStats[0]);
+    window.open(imageUrl, '_blank', 'noopener,noreferrer');
   };
 
   if (!isConnected) {
@@ -105,42 +104,6 @@ export function ProfileTab() {
             <span>Mint costs 0.1 USDC and earns you 2 points</span>
           </div>
         </div>
-      ) : showDownloadView ? (
-        <div className="max-w-2xl mx-auto text-center space-y-6">
-          <div>
-            <h2 className="text-2xl font-bold mb-2">Save Your Christmas PFP</h2>
-            <p className="text-gray-400">
-              Tap the button below to download your image
-            </p>
-          </div>
-          
-          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6">
-            <img
-              src={ipfsToHttp(pfpUrl)}
-              alt="Christmas PFP"
-              className="w-full max-w-md mx-auto rounded-lg shadow-lg border-2 border-blue-500"
-            />
-          </div>
-
-          <div className="flex flex-col gap-3">
-            <a
-              href={ipfsToHttp(pfpUrl)}
-              download="christmas-pfp.png"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-6 py-3 bg-blue-500 hover:bg-blue-600 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
-            >
-              <Download className="w-4 h-4" />
-              Download Image
-            </a>
-            <button
-              onClick={() => setShowDownloadView(false)}
-              className="px-6 py-3 bg-white/10 hover:bg-white/20 rounded-lg font-medium transition-colors"
-            >
-              ← Back to Profile
-            </button>
-          </div>
-        </div>
       ) : (
         <div className="grid md:grid-cols-2 gap-8">
           {/* PFP Display */}
@@ -162,7 +125,7 @@ export function ProfileTab() {
                 className="w-full mt-4 px-4 py-3 bg-blue-500 hover:bg-blue-600 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
               >
                 <Download className="w-4 h-4" />
-                Save PFP
+                Open in Browser
               </button>
             </div>
 

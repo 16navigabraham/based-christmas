@@ -162,14 +162,9 @@ export function MintFlow({ originalImage, cappedBlob }: MintFlowProps) {
     }
   };
 
-  // Show download instructions
-  const [showDownloadView, setShowDownloadView] = useState(false);
-  const [downloadUrl, setDownloadUrl] = useState<string>('');
-
   const handleDownload = () => {
-    const url = URL.createObjectURL(cappedBlob);
-    setDownloadUrl(url);
-    setShowDownloadView(true);
+    const imageUrl = ipfsToHttp(cappedUrl);
+    window.open(imageUrl, '_blank', 'noopener,noreferrer');
   };
 
   const isProcessing = isApproving || isApproveTxLoading || isMinting || isMintTxLoading;
@@ -255,7 +250,7 @@ export function MintFlow({ originalImage, cappedBlob }: MintFlowProps) {
           </div>
         )}
 
-        {currentStep === 'success' && !showDownloadView && (
+        {currentStep === 'success' && (
           <div className="text-center space-y-6">
             <div className="mx-auto w-20 h-20 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
               <CheckCircle2 className="w-12 h-12 text-green-600 dark:text-green-400" />
@@ -280,7 +275,7 @@ export function MintFlow({ originalImage, cappedBlob }: MintFlowProps) {
                 className="btn btn-primary"
               >
                 <Download className="w-4 h-4 mr-2" />
-                Download Image
+                Open in Browser
               </button>
 
               {mintHash && (
@@ -294,36 +289,6 @@ export function MintFlow({ originalImage, cappedBlob }: MintFlowProps) {
                   <ExternalLink className="w-4 h-4 ml-2" />
                 </a>
               )}
-            </div>
-          </div>
-        )}
-
-        {showDownloadView && (
-          <div className="text-center space-y-4">
-            <h3 className="text-xl font-bold">Save Your PFP</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              Tap the button below to download your image
-            </p>
-            <img
-              src={downloadUrl}
-              alt="Your Christmas PFP"
-              className="mx-auto max-w-md rounded-lg shadow-lg border-2 border-blue-500"
-            />
-            <div className="flex flex-col gap-3">
-              <a
-                href={downloadUrl}
-                download="christmas-pfp.png"
-                className="px-6 py-3 bg-blue-500 hover:bg-blue-600 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
-              >
-                <Download className="w-4 h-4" />
-                Download Image
-              </a>
-              <button
-                onClick={() => setShowDownloadView(false)}
-                className="btn btn-outline"
-              >
-                Back
-              </button>
             </div>
           </div>
         )}
