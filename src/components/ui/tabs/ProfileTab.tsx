@@ -130,7 +130,7 @@ export function ProfileTab() {
                     // Use Farcaster SDK - works on iOS and all Farcaster clients
                     await sdk.actions.composeCast({
                       text: castText,
-                      embeds: [imageUrl]
+                      embeds: [imageUrl, 'https://farcaster.xyz/miniapps/Rh6KUvzlHqMp/based-christmas']
                     });
                     console.log("Compose cast opened successfully");
                   } catch (sdkError) {
@@ -138,7 +138,8 @@ export function ProfileTab() {
                     
                     // Fallback: Open Warpcast compose (for non-Farcaster browsers)
                     const encodedText = encodeURIComponent(castText);
-                    const castUrl = `https://warpcast.com/~/compose?text=${encodedText}&embeds[]=${encodeURIComponent(imageUrl)}`;
+                    const miniAppUrl = 'https://farcaster.xyz/miniapps/Rh6KUvzlHqMp/based-christmas';
+                    const castUrl = `https://warpcast.com/~/compose?text=${encodedText}&embeds[]=${encodeURIComponent(imageUrl)}&embeds[]=${encodeURIComponent(miniAppUrl)}`;
                     window.location.href = castUrl;
                   }
                 }}
