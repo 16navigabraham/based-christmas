@@ -271,11 +271,19 @@ export function MintFlow({ originalImage, cappedBlob }: MintFlowProps) {
 
             <div className="flex gap-3 justify-center">
               <button
-                onClick={handleDownload}
+                onClick={() => {
+                  const imageUrl = ipfsToHttp(cappedUrl);
+                  if (window.sdk?.actions.composeCast) {
+                    window.sdk.actions.composeCast({
+                      text: 'Just minted my Based Christmas PFP! 🎄⛓️ Staying Based on @base',
+                      embeds: [imageUrl]
+                    });
+                  }
+                }}
                 className="btn btn-primary"
               >
                 <Download className="w-4 h-4 mr-2" />
-                Open in Browser
+                Cast to Farcaster
               </button>
 
               {mintHash && (

@@ -121,11 +121,19 @@ export function ProfileTab() {
                 />
               </div>
               <button
-                onClick={handleSaveOrShare}
-                className="w-full mt-4 px-4 py-3 bg-blue-500 hover:bg-blue-600 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+                onClick={() => {
+                  const imageUrl = ipfsToHttp(pfpUrl);
+                  if (window.sdk?.actions.composeCast) {
+                    window.sdk.actions.composeCast({
+                      text: 'Staying Based this Christmas with my Basemax Cap! 🎄⛓️ Onchain forever on @base',
+                      embeds: [imageUrl]
+                    });
+                  }
+                }}
+                className="w-full mt-4 px-4 py-3 bg-purple-500 hover:bg-purple-600 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
               >
                 <Download className="w-4 h-4" />
-                Open in Browser
+                Cast to Farcaster
               </button>
             </div>
 
