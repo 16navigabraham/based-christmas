@@ -1,0 +1,147 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+
+/**
+ * @title ChristmasCapPFP
+ * @notice A contract for minting Christmas-themed profile pictures with a points reward system
+ * @dev Users pay USDC to mint PFPs and earn points for each mint
+ */
+contract ChristmasCapPFP is Ownable, ReentrancyGuard {
+    using SafeERC20 for IERC20;
+
+    /// @notice USDC token contract
+    IERC20 public immutable usdc;
+    
+    /// @notice Price per mint in USDC (6 decimals) - 0.1 USDC
+    uint256 public constant PRICE = 100_000;
+    
+    /// @notice Points awarded per mint
+    uint256 public constant POINTS_PER_MINT = 2;
+
+    /// @notice Mapping of user address to their current PFP image URI
+    mapping(address => string) public userPFP;
+    
+    /// @notice Mapping of user address to their total points
+    mapping(address => uint256) public userPoints;
+    
+    /// @notice Mapping of user address to their total mint count
+    mapping(address => uint256) public userMintCount;
+
+    /// @notice Total number of PFPs minted across all users
+    uint256 public totalMints;
+
+    /// @notice Emitted when a user mints a new PFP
+    event PFPMinted(
+        address indexed user,
+        string cappedImage,
+        uint256 pointsAwarded,
+        uint256 totalPoints,
+        uint256 mintNumber,
+        uint256 timestamp
+    );
+
+    /// @notice Emitted when the contract owner withdraws funds
+    event FundsWithdrawn(address indexed owner, uint256 amount);
+
+    error InsufficientPayment();
+    error EmptyImageURI();
+    error NoFundsToWithdraw();
+    error TransferFailed();
+
+    /**
+     * @notice Contract constructor
+     * @param _usdc Address of the USDC token contract
+     */
+    constructor(address _usdc) Ownable(msg.sender) {
+        require(_usdc != address(0), "Invalid USDC address");
+        usdc = IERC20(_usdc);
+    }
+
+    /**
+     * @notice Mint a Christmas cap PFP
+     * @param _cappedImage URI of the capped image
+     * @dev Requires USDC approval before calling
+     */
+    function mintChristmasCap(string calldata _cappedImage) external nonReentrant {
+        if (bytes(_cappedImage).length == 0) revert EmptyImageURI();
+
+        // Transfer USDC from user to contract
+        usdc.safeTransferFrom(msg.sender, address(this), PRICE);
+
+        // Update user data
+        userPFP[msg.sender] = _cappedImage;
+        userMintCount[msg.sender]++;
+        userPoints[msg.sender] += POINTS_PER_MINT;
+        totalMints++;
+
+        emit PFPMinted(
+            msg.sender,
+            _cappedImage,
+            POINTS_PER_MINT,
+            userPoints[msg.sender],
+            userMintCount[msg.sender],
+            block.timestamp
+        );
+    }
+
+    /**
+     * @notice Get comprehensive stats for a user
+     * @param _user Address of the user
+     * @return pfp Current PFP image URI
+     * @return points Total points earned
+     * @return mintCount Total number of mints
+     */
+    function getUserStats(address _user) external view returns (
+        string memory pfp,
+        uint256 points,
+        uint256 mintCount
+    ) {
+        return (
+            userPFP[_user],
+            userPoints[_user],
+            userMintCount[_user]
+        );
+    }
+
+    /**
+     * @notice Get the current USDC balance of the contract
+     * @return Current USDC balance
+     */
+    function getContractBalance() external view returns (uint256) {
+        return usdc.balanceOf(address(this));
+    }
+
+    /**
+     * @notice Withdraw all USDC from the contract to owner
+     * @dev Only callable by contract owner
+     */
+    function withdraw() external onlyOwner nonReentrant {
+        uint256 balance = usdc.balanceOf(address(this));
+        if (balance == 0) revert NoFundsToWithdraw();
+        
+        usdc.safeTransfer(owner(), balance);
+        
+        emit FundsWithdrawn(owner(), balance);
+    }
+
+    /**
+     * @notice Emergency withdraw function for any ERC20 token
+     * @param _token Address of the ERC20 token to withdraw
+     * @dev Only callable by contract owner, useful for accidentally sent tokens
+     */
+    function emergencyWithdrawToken(address _token) external onlyOwner nonReentrant {
+        require(_token != address(0), "Invalid token address");
+        
+        IERC20 token = IERC20(_token);
+        uint256 balance = token.balanceOf(address(this));
+        
+        if (balance == 0) revert NoFundsToWithdraw();
+        
+        token.safeTransfer(owner(), balance);
+    }
+}

@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useAccount, useWriteContract, useWaitForTransactionReceipt, useReadContract } from 'wagmi';
-import { parseUnits } from 'viem';
 import { CheckCircle2, Loader2, ExternalLink, Download } from 'lucide-react';
 import { 
   CHRISTMAS_CAP_ABI, 
@@ -144,8 +143,8 @@ export function MintFlow({ originalImage, cappedBlob }: MintFlowProps) {
       return;
     }
 
-    if (!originalUrl || !cappedUrl) {
-      setError('Images not uploaded yet');
+    if (!cappedUrl) {
+      setError('Image not uploaded yet');
       return;
     }
 
@@ -154,8 +153,8 @@ export function MintFlow({ originalImage, cappedBlob }: MintFlowProps) {
       mintCap({
         address: CHRISTMAS_CAP_CONTRACT_ADDRESS,
         abi: CHRISTMAS_CAP_ABI,
-        functionName: 'addChristmasCap',
-        args: [originalUrl, cappedUrl],
+        functionName: 'mintChristmasCap',
+        args: [cappedUrl],
       });
     } catch (err: any) {
       console.error('Mint error:', err);

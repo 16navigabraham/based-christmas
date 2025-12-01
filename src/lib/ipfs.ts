@@ -2,8 +2,8 @@
  * IPFS upload utilities using Pinata
  */
 
-const PINATA_API_KEY = process.env.NEXT_PUBLIC_PINATA_API_KEY || '';
-const PINATA_SECRET_KEY = process.env.NEXT_PUBLIC_PINATA_SECRET_KEY || '';
+const PINATA_JWT = process.env.NEXT_PUBLIC_PINATA_JWT || '';
+const PINATA_GATEWAY = process.env.NEXT_PUBLIC_PINATA_GATEWAY || 'https://gateway.pinata.cloud';
 
 /**
  * Uploads an image to IPFS via Pinata
@@ -39,13 +39,15 @@ export async function uploadToIPFS(
       {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${PINATA_API_KEY}`,
+          Authorization: `Bearer ${PINATA_JWT}`,
         },
         body: formData,
       }
     );
 
     if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      console.error('Pinata error:', errorData);
       throw new Error(`Failed to upload to IPFS: ${response.statusText}`);
     }
 
@@ -65,7 +67,7 @@ export async function uploadToIPFS(
 export function ipfsToHttp(ipfsUrl: string): string {
   if (ipfsUrl.startsWith('ipfs://')) {
     const hash = ipfsUrl.replace('ipfs://', '');
-    return `https://gateway.pinata.cloud/ipfs/${hash}`;
+    return `${PINATA_GATEWAY}/ipfs/${hash}`;
   }
   return ipfsUrl;
 }

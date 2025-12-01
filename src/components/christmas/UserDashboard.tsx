@@ -1,7 +1,7 @@
 'use client';
 
 import { useReadContract } from 'wagmi';
-import { CHRISTMAS_CAP_ABI, CHRISTMAS_CAP_CONTRACT_ADDRESS } from '@/lib/contracts';
+import { CHRISTMAS_CAP_ABI, CHRISTMAS_CAP_CONTRACT_ADDRESS } from '~/lib/contracts';
 import Image from 'next/image';
 
 interface UserDashboardProps {
@@ -9,10 +9,10 @@ interface UserDashboardProps {
 }
 
 export function UserDashboard({ address }: UserDashboardProps) {
-  const { data: userPFP, isLoading } = useReadContract({
+  const { data: userStats, isLoading } = useReadContract({
     address: CHRISTMAS_CAP_CONTRACT_ADDRESS,
     abi: CHRISTMAS_CAP_ABI,
-    functionName: 'userPFP',
+    functionName: 'getUserStats',
     args: [address],
   });
 
@@ -31,7 +31,11 @@ export function UserDashboard({ address }: UserDashboardProps) {
     );
   }
 
-  const pfpUrl = userPFP as string;
+  if (!userStats) {
+    return null;
+  }
+
+  const [pfpUrl, points, mintCount] = userStats as [string, bigint, bigint];
 
   if (!pfpUrl || pfpUrl === '') {
     return null;
@@ -56,6 +60,24 @@ export function UserDashboard({ address }: UserDashboardProps) {
             </div>
             <div className="flex-1">
               <h3 className="text-lg font-semibold mb-2">Latest Christmas PFP</h3>
+              
+              <div className="flex gap-4 mb-4">
+                <div className="flex items-center gap-2 bg-blue-500/20 px-3 py-1 rounded-lg">
+                  <span className="text-2xl">⭐</span>
+                  <div>
+                    <div className="text-xl font-bold text-blue-400">{points.toString()}</div>
+                    <div className="text-xs text-gray-400">Points</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 bg-green-500/20 px-3 py-1 rounded-lg">
+                  <span className="text-2xl">#</span>
+                  <div>
+                    <div className="text-xl font-bold text-green-400">{mintCount.toString()}</div>
+                    <div className="text-xs text-gray-400">Mints</div>
+                  </div>
+                </div>
+              </div>
+              
               <p className="text-sm text-gray-400 mb-4 break-all">{pfpUrl}</p>
               <div className="flex gap-2 flex-wrap">
                 <a
@@ -77,6 +99,10 @@ export function UserDashboard({ address }: UserDashboardProps) {
             </div>
           </div>
         </div>
+      </div>
+      
+      <div className="mt-4 text-center text-sm text-gray-400">
+        🎄 Earn 2 points per mint!
       </div>
     </div>
   );

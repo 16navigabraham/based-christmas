@@ -12,6 +12,65 @@ export const CHRISTMAS_CAP_ABI = [
     type: "constructor",
   },
   {
+    inputs: [],
+    name: "EmptyImageURI",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "InsufficientPayment",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "NoFundsToWithdraw",
+    type: "error",
+  },
+  {
+    inputs: [{ internalType: "address", name: "owner", type: "address" }],
+    name: "OwnableInvalidOwner",
+    type: "error",
+  },
+  {
+    inputs: [{ internalType: "address", name: "account", type: "address" }],
+    name: "OwnableUnauthorizedAccount",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "ReentrancyGuardReentrantCall",
+    type: "error",
+  },
+  {
+    inputs: [{ internalType: "address", name: "token", type: "address" }],
+    name: "SafeERC20FailedOperation",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "TransferFailed",
+    type: "error",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "owner",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+    ],
+    name: "FundsWithdrawn",
+    type: "event",
+  },
+  {
     anonymous: false,
     inputs: [
       {
@@ -42,14 +101,26 @@ export const CHRISTMAS_CAP_ABI = [
       {
         indexed: false,
         internalType: "string",
-        name: "originalImage",
+        name: "cappedImage",
         type: "string",
       },
       {
         indexed: false,
-        internalType: "string",
-        name: "cappedImage",
-        type: "string",
+        internalType: "uint256",
+        name: "pointsAwarded",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "totalPoints",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "mintNumber",
+        type: "uint256",
       },
       {
         indexed: false,
@@ -58,8 +129,15 @@ export const CHRISTMAS_CAP_ABI = [
         type: "uint256",
       },
     ],
-    name: "PFPCapped",
+    name: "PFPMinted",
     type: "event",
+  },
+  {
+    inputs: [],
+    name: "POINTS_PER_MINT",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
   },
   {
     inputs: [],
@@ -69,11 +147,33 @@ export const CHRISTMAS_CAP_ABI = [
     type: "function",
   },
   {
-    inputs: [
-      { internalType: "string", name: "_originalImage", type: "string" },
-      { internalType: "string", name: "_cappedImage", type: "string" },
+    inputs: [{ internalType: "address", name: "_token", type: "address" }],
+    name: "emergencyWithdrawToken",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getContractBalance",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "address", name: "_user", type: "address" }],
+    name: "getUserStats",
+    outputs: [
+      { internalType: "string", name: "pfp", type: "string" },
+      { internalType: "uint256", name: "points", type: "uint256" },
+      { internalType: "uint256", name: "mintCount", type: "uint256" },
     ],
-    name: "addChristmasCap",
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "string", name: "_cappedImage", type: "string" }],
+    name: "mintChristmasCap",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -93,6 +193,13 @@ export const CHRISTMAS_CAP_ABI = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "totalMints",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [{ internalType: "address", name: "newOwner", type: "address" }],
     name: "transferOwnership",
     outputs: [],
@@ -108,8 +215,22 @@ export const CHRISTMAS_CAP_ABI = [
   },
   {
     inputs: [{ internalType: "address", name: "", type: "address" }],
+    name: "userMintCount",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "address", name: "", type: "address" }],
     name: "userPFP",
     outputs: [{ internalType: "string", name: "", type: "string" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "address", name: "", type: "address" }],
+    name: "userPoints",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },

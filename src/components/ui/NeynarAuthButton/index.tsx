@@ -158,7 +158,7 @@ export function NeynarAuthButton() {
           const signInData = {
             message,
             signature,
-            redirect: false,
+            redirect: false as const,
             nonce: nonce || '',
             fid: user?.fid?.toString() || '',
             signers: JSON.stringify(signers),
@@ -559,7 +559,7 @@ export function NeynarAuthButton() {
       const signInData = {
         message: result.message,
         signature: result.signature,
-        redirect: false,
+        redirect: false as const,
         nonce: nonce,
       };
 

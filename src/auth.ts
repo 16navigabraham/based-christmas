@@ -1,4 +1,5 @@
-import { AuthOptions, getServerSession } from 'next-auth';
+import NextAuth from 'next-auth';
+import type { NextAuthConfig } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { createAppClient, viemConnector } from '@farcaster/auth-client';
 
@@ -214,7 +215,7 @@ function getDomainFromUrl(urlString: string | undefined): string {
   }
 }
 
-export const authOptions: AuthOptions = {
+export const authConfig: NextAuthConfig = {
   // Configure one or more authentication providers
   providers: [
     CredentialsProvider({
@@ -253,7 +254,7 @@ export const authOptions: AuthOptions = {
         },
       },
       async authorize(credentials) {
-        const nonce = credentials?.nonce;
+        const nonce = credentials?.nonce as string;
 
         if (!nonce) {
           console.error('No nonce or CSRF token provided for Neynar auth');
@@ -292,7 +293,7 @@ export const authOptions: AuthOptions = {
           }
 
           // Validate that the provided FID matches the verified FID
-          if (credentials?.fid && parseInt(credentials.fid) !== fid) {
+          if (credentials?.fid && parseInt(credentials.fid as string) !== fid) {
             console.error('FID mismatch in Neynar auth');
             return null;
           }
@@ -301,9 +302,9 @@ export const authOptions: AuthOptions = {
             id: fid.toString(),
             provider: 'neynar',
             signers: credentials?.signers
-              ? JSON.parse(credentials.signers)
+              ? JSON.parse(credentials.signers as string)
               : undefined,
-            user: credentials?.user ? JSON.parse(credentials.user) : undefined,
+            user: credentials?.user ? JSON.parse(credentials.user as string) : undefined,
           };
         } catch (error) {
           console.error('Error in Neynar auth:', error);
@@ -364,9 +365,11 @@ export const authOptions: AuthOptions = {
   },
 };
 
+export const { handlers, auth, signIn, signOut } = NextAuth(authConfig);
+
 export const getSession = async () => {
   try {
-    return await getServerSession(authOptions);
+    return await auth();
   } catch (error) {
     console.error('Error getting server session:', error);
     return null;

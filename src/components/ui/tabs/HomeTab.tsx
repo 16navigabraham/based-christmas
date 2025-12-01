@@ -1,8 +1,14 @@
 "use client";
 
+import { useState } from 'react';
 import { useAccount } from 'wagmi';
+import { ImageUpload } from '../christmas/ImageUpload';
+import { CapPreview } from '../christmas/CapPreview';
 import { MintFlow } from '../christmas/MintFlow';
-import { UserDashboard } from '../christmas/UserDashboard';
+import { UserDashboard } from '../../christmas/UserDashboard';
+import { ArrowRight } from 'lucide-react';
+
+type FlowStep = 'upload' | 'preview' | 'mint' | 'dashboard';
 
 /**
  * HomeTab component displays the Christmas Cap PFP mini app.
@@ -12,6 +18,28 @@ import { UserDashboard } from '../christmas/UserDashboard';
  */
 export function HomeTab() {
   const { address, isConnected } = useAccount();
+  const [currentStep, setCurrentStep] = useState<FlowStep>('upload');
+  const [originalImage, setOriginalImage] = useState<File | null>(null);
+  const [cappedBlob, setCappedBlob] = useState<Blob | null>(null);
+
+  const handleImageSelect = (file: File) => {
+    setOriginalImage(file);
+    setCurrentStep('preview');
+  };
+
+  const handleProcessed = (blob: Blob) => {
+    setCappedBlob(blob);
+  };
+
+  const handleProceedToMint = () => {
+    setCurrentStep('mint');
+  };
+
+  const handleStartOver = () => {
+    setOriginalImage(null);
+    setCappedBlob(null);
+    setCurrentStep('upload');
+  };
 
   return (
     <div className="w-full max-w-4xl mx-auto px-4 py-8">
@@ -28,13 +56,68 @@ export function HomeTab() {
         <div className="flex flex-col items-center justify-center min-h-[40vh] text-center">
           <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 max-w-md">
             <p className="text-xl mb-6">Connect your wallet to get started with your festive PFP transformation!</p>
-            <p className="text-sm text-gray-400">You'll need a wallet with USDC on Base network</p>
+            <p className="text-sm text-gray-400">You&apos;ll need a wallet with USDC on Base network</p>
           </div>
         </div>
       ) : (
         <div className="space-y-8">
-          <MintFlow />
-          <UserDashboard address={address!} />
+          {/* Main Flow */}
+          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6">
+            {currentStep === 'upload' && (
+              <div className="space-y-6">
+                <h2 className="text-2xl font-bold text-center">Step 1: Upload Your PFP</h2>
+                <ImageUpload onImageSelect={handleImageSelect} />
+              </div>
+            )}
+
+            {currentStep === 'preview' && originalImage && (
+              <div className="space-y-6">
+                <h2 className="text-2xl font-bold text-center">Step 2: Preview Your Festive PFP</h2>
+                <CapPreview 
+                  originalImage={originalImage} 
+                  onProcessed={handleProcessed}
+                />
+                {cappedBlob && (
+                  <div className="flex gap-3 justify-center">
+                    <button
+                      onClick={handleStartOver}
+                      className="px-6 py-3 bg-white/10 hover:bg-white/20 rounded-lg font-medium transition-colors"
+                    >
+                      Start Over
+                    </button>
+                    <button
+                      onClick={handleProceedToMint}
+                      className="px-6 py-3 bg-blue-500 hover:bg-blue-600 rounded-lg font-medium transition-colors flex items-center gap-2"
+                    >
+                      Proceed to Mint
+                      <ArrowRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {currentStep === 'mint' && originalImage && cappedBlob && (
+              <div className="space-y-6">
+                <h2 className="text-2xl font-bold text-center">Step 3: Mint Your Christmas PFP</h2>
+                <MintFlow 
+                  originalImage={originalImage}
+                  cappedBlob={cappedBlob}
+                />
+                <div className="text-center">
+                  <button
+                    onClick={handleStartOver}
+                    className="text-sm text-gray-400 hover:text-white transition-colors"
+                  >
+                    Create another one
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* User Dashboard */}
+          {address && <UserDashboard address={address} />}
         </div>
       )}
     </div>

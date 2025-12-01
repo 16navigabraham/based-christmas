@@ -65,22 +65,29 @@ export const APP_SPLASH_URL: string = `${APP_URL}/splash.png`;
  * Background color for the splash screen.
  * Used as fallback when splash image is loading.
  */
-export const APP_SPLASH_BACKGROUND_COLOR: string = '#f7f7f7';
+export const APP_SPLASH_BACKGROUND_COLOR: string = '#89CFF0';
 
 /**
  * Account association for the mini app.
  * Used to associate the mini app with a Farcaster account.
  * If not provided, the mini app will be unsigned and have limited capabilities.
  */
-export const APP_ACCOUNT_ASSOCIATION: AccountAssociation | undefined =
-  undefined;
-
+export const APP_ACCOUNT_ASSOCIATION: AccountAssociation | undefined = 
+  process.env.FARCASTER_ACCOUNT_ASSOCIATION_HEADER &&
+  process.env.FARCASTER_ACCOUNT_ASSOCIATION_PAYLOAD &&
+  process.env.FARCASTER_ACCOUNT_ASSOCIATION_SIGNATURE
+    ? {
+        header: process.env.FARCASTER_ACCOUNT_ASSOCIATION_HEADER,
+        payload: process.env.FARCASTER_ACCOUNT_ASSOCIATION_PAYLOAD,
+        signature: process.env.FARCASTER_ACCOUNT_ASSOCIATION_SIGNATURE,
+      }
+    : undefined;
 // --- UI Configuration ---
 /**
  * Text displayed on the main action button.
  * Used for the primary call-to-action in the mini app.
  */
-export const APP_BUTTON_TEXT: string = 'mint Based christmas';
+export const APP_BUTTON_TEXT: string = 'mint your Based christmas PFP';
 
 // --- Integration Configuration ---
 /**
