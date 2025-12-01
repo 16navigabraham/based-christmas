@@ -110,8 +110,7 @@ export function ProfileTab() {
           <div>
             <h2 className="text-2xl font-bold mb-2">Save Your Christmas PFP</h2>
             <p className="text-gray-400">
-              📱 On mobile: Long press the image and select &quot;Save Image&quot;<br />
-              💻 On desktop: Right click and select &quot;Save image as...&quot;
+              Tap the button below to download your image
             </p>
           </div>
           
@@ -123,12 +122,24 @@ export function ProfileTab() {
             />
           </div>
 
-          <button
-            onClick={() => setShowDownloadView(false)}
-            className="px-6 py-3 bg-white/10 hover:bg-white/20 rounded-lg font-medium transition-colors"
-          >
-            ← Back to Profile
-          </button>
+          <div className="flex flex-col gap-3">
+            <a
+              href={ipfsToHttp(pfpUrl)}
+              download="christmas-pfp.png"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-6 py-3 bg-blue-500 hover:bg-blue-600 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+            >
+              <Download className="w-4 h-4" />
+              Download Image
+            </a>
+            <button
+              onClick={() => setShowDownloadView(false)}
+              className="px-6 py-3 bg-white/10 hover:bg-white/20 rounded-lg font-medium transition-colors"
+            >
+              ← Back to Profile
+            </button>
+          </div>
         </div>
       ) : (
         <div className="grid md:grid-cols-2 gap-8">

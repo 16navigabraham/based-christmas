@@ -302,19 +302,29 @@ export function MintFlow({ originalImage, cappedBlob }: MintFlowProps) {
           <div className="text-center space-y-4">
             <h3 className="text-xl font-bold">Save Your PFP</h3>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              Long press the image below and select &quot;Save Image&quot;
+              Tap the button below to download your image
             </p>
             <img
               src={downloadUrl}
               alt="Your Christmas PFP"
               className="mx-auto max-w-md rounded-lg shadow-lg border-2 border-blue-500"
             />
-            <button
-              onClick={() => setShowDownloadView(false)}
-              className="btn btn-outline"
-            >
-              Back
-            </button>
+            <div className="flex flex-col gap-3">
+              <a
+                href={downloadUrl}
+                download="christmas-pfp.png"
+                className="px-6 py-3 bg-blue-500 hover:bg-blue-600 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+              >
+                <Download className="w-4 h-4" />
+                Download Image
+              </a>
+              <button
+                onClick={() => setShowDownloadView(false)}
+                className="btn btn-outline"
+              >
+                Back
+              </button>
+            </div>
           </div>
         )}
 
