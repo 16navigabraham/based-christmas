@@ -116,9 +116,15 @@ export function MintFlow({ originalImage, cappedBlob }: MintFlowProps) {
       return;
     }
 
-    // Check balance
-    if (!usdcBalance || usdcBalance < CAP_PRICE) {
-      setError(`Insufficient USDC balance. You need ${CAP_PRICE_FORMATTED}`);
+    // Check balance with debug logging
+    console.log('USDC Balance:', usdcBalance?.toString(), 'Required:', CAP_PRICE.toString());
+    if (usdcBalance === undefined || usdcBalance === null) {
+      setError('Loading USDC balance... Please try again in a moment.');
+      return;
+    }
+    
+    if (usdcBalance < CAP_PRICE) {
+      setError(`Insufficient USDC balance. You need ${CAP_PRICE_FORMATTED} but have ${(Number(usdcBalance) / 1e6).toFixed(2)} USDC`);
       return;
     }
 
@@ -201,10 +207,17 @@ export function MintFlow({ originalImage, cappedBlob }: MintFlowProps) {
               </p>
             </div>
             
-            {usdcBalance && (
-              <p className="text-sm text-center text-gray-600 dark:text-gray-400">
-                Your balance: {(Number(usdcBalance) / 1e6).toFixed(2)} USDC
-              </p>
+            {usdcBalance !== undefined && usdcBalance !== null ? (
+              <div className="text-center">
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Your balance: <span className="font-bold text-green-600 dark:text-green-400">{(Number(usdcBalance) / 1e6).toFixed(6)} USDC</span>
+                </p>
+                <p className="text-xs text-gray-500 mt-1">
+                  Required: {CAP_PRICE_FORMATTED} ({usdcBalance >= CAP_PRICE ? '✓ Sufficient' : '✗ Insufficient'})
+                </p>
+              </div>
+            ) : (
+              <p className="text-sm text-center text-gray-500">Loading balance...</p>
             )}
 
             <button
