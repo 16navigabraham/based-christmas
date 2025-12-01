@@ -27,48 +27,11 @@ export function ProfileTab() {
     },
   });
 
-  // Download the PFP image - simple fetch approach like Python requests.get()
-  const handleSaveOrShare = async () => {
-    if (!userStats?.[0]) return;
+  // Show download instructions
+  const [showDownloadView, setShowDownloadView] = useState(false);
 
-    try {
-      // Extract IPFS hash and build Pinata URL
-      const ipfsHash = userStats[0].replace('ipfs://', '');
-      const imageUrl = `https://gateway.pinata.cloud/ipfs/${ipfsHash}`;
-      
-      console.log('Downloading from:', imageUrl);
-      
-      // Simple fetch (like Python requests.get)
-      const response = await fetch(imageUrl);
-      
-      // Check status (like Python: if response.status_code == 200)
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-      
-      // Get blob (like Python: response.content)
-      const blob = await response.blob();
-      console.log('Downloaded blob:', blob.size, 'bytes');
-      
-      // Create download (like Python: with open(filename, 'wb'))
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `christmas-pfp-${Date.now()}.png`;
-      document.body.appendChild(link);
-      link.click();
-      
-      // Cleanup
-      setTimeout(() => {
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-      }, 100);
-      
-      console.log('Download initiated successfully');
-      
-    } catch (error) {
-      console.error('Download failed:', error);
-    }
+  const handleSaveOrShare = () => {
+    setShowDownloadView(true);
   };
 
   if (!isConnected) {
@@ -141,6 +104,31 @@ export function ProfileTab() {
             <span>Mint costs 0.1 USDC and earns you 2 points</span>
           </div>
         </div>
+      ) : showDownloadView ? (
+        <div className="max-w-2xl mx-auto text-center space-y-6">
+          <div>
+            <h2 className="text-2xl font-bold mb-2">Save Your Christmas PFP</h2>
+            <p className="text-gray-400">
+              📱 On mobile: Long press the image and select &quot;Save Image&quot;<br />
+              💻 On desktop: Right click and select &quot;Save image as...&quot;
+            </p>
+          </div>
+          
+          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6">
+            <img
+              src={ipfsToHttp(pfpUrl)}
+              alt="Christmas PFP"
+              className="w-full max-w-md mx-auto rounded-lg shadow-lg border-2 border-blue-500"
+            />
+          </div>
+
+          <button
+            onClick={() => setShowDownloadView(false)}
+            className="px-6 py-3 bg-white/10 hover:bg-white/20 rounded-lg font-medium transition-colors"
+          >
+            ← Back to Profile
+          </button>
+        </div>
       ) : (
         <div className="grid md:grid-cols-2 gap-8">
           {/* PFP Display */}
@@ -162,7 +150,7 @@ export function ProfileTab() {
                 className="w-full mt-4 px-4 py-3 bg-blue-500 hover:bg-blue-600 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
               >
                 <Download className="w-4 h-4" />
-                Download PFP
+                Save PFP
               </button>
             </div>
 

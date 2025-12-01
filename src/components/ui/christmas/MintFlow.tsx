@@ -162,30 +162,14 @@ export function MintFlow({ originalImage, cappedBlob }: MintFlowProps) {
     }
   };
 
-  // Download image - use local blob directly (no IPFS fetch needed!)
+  // Show download instructions
+  const [showDownloadView, setShowDownloadView] = useState(false);
+  const [downloadUrl, setDownloadUrl] = useState<string>('');
+
   const handleDownload = () => {
-    try {
-      console.log('Downloading local blob:', cappedBlob.size, 'bytes');
-      
-      // Create download link from the blob we already have
-      const url = URL.createObjectURL(cappedBlob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `christmas-pfp-${Date.now()}.png`;
-      document.body.appendChild(link);
-      link.click();
-      
-      // Cleanup
-      setTimeout(() => {
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-      }, 100);
-      
-      console.log('Download initiated successfully');
-      
-    } catch (error) {
-      console.error('Download failed:', error);
-    }
+    const url = URL.createObjectURL(cappedBlob);
+    setDownloadUrl(url);
+    setShowDownloadView(true);
   };
 
   const isProcessing = isApproving || isApproveTxLoading || isMinting || isMintTxLoading;
@@ -271,7 +255,7 @@ export function MintFlow({ originalImage, cappedBlob }: MintFlowProps) {
           </div>
         )}
 
-        {currentStep === 'success' && (
+        {currentStep === 'success' && !showDownloadView && (
           <div className="text-center space-y-6">
             <div className="mx-auto w-20 h-20 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
               <CheckCircle2 className="w-12 h-12 text-green-600 dark:text-green-400" />
@@ -311,6 +295,26 @@ export function MintFlow({ originalImage, cappedBlob }: MintFlowProps) {
                 </a>
               )}
             </div>
+          </div>
+        )}
+
+        {showDownloadView && (
+          <div className="text-center space-y-4">
+            <h3 className="text-xl font-bold">Save Your PFP</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              Long press the image below and select &quot;Save Image&quot;
+            </p>
+            <img
+              src={downloadUrl}
+              alt="Your Christmas PFP"
+              className="mx-auto max-w-md rounded-lg shadow-lg border-2 border-blue-500"
+            />
+            <button
+              onClick={() => setShowDownloadView(false)}
+              className="btn btn-outline"
+            >
+              Back
+            </button>
           </div>
         )}
 

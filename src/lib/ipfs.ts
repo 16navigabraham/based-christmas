@@ -70,8 +70,8 @@ export function ipfsToHttp(ipfsUrl: string): string {
   
   const cid = ipfsUrl.replace('ipfs://', '');
   
-  // Use Pinata gateway - has better CORS support and reliability for Farcaster
-  return `https://gateway.pinata.cloud/ipfs/${cid}`;
+  // Use your dedicated Pinata gateway for best performance
+  return `https://sapphire-careful-peacock-258.mypinata.cloud/ipfs/${cid}`;
 }
 
 /**
