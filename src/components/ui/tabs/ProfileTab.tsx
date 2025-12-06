@@ -150,10 +150,9 @@ export function ProfileTab() {
               </button>
               <button
                 onClick={() => {
-                  const text = 'Staying Based this Christmas with my Basemax Cap! 🎄⛓️ Onchain forever on @base';
-                  const url = 'https://farcaster.xyz/miniapps/Rh6KUvzlHqMp/based-christmas';
-                  const xShareUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
-                  window.open(xShareUrl, '_blank', 'noopener,noreferrer');
+                  const text = 'Staying Based this Christmas with my Basemax Cap! 🎄⛓️ Onchain forever on @base\n\nhttps://based-christmas.vercel.app/';
+                  const xShareUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(text)}`;
+                  window.location.href = xShareUrl;
                 }}
                 className="w-full px-4 py-3 bg-black hover:bg-gray-900 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 border border-white/20"
               >
