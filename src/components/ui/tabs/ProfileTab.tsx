@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useAccount, useReadContract } from 'wagmi';
 import { CHRISTMAS_CAP_ABI, CHRISTMAS_CAP_CONTRACT_ADDRESS } from '~/lib/contracts';
 import { ipfsToHttp } from '~/lib/ipfs';
-import { Download, Gift, Trophy, Camera, Share2 } from 'lucide-react';
+import { Download, Gift, Trophy, Camera, Share2, X } from 'lucide-react';
 import { sdk } from '@farcaster/miniapp-sdk';
 
 /**
@@ -98,11 +98,11 @@ export function ProfileTab() {
           <Gift className="w-20 h-20 mx-auto mb-6 text-blue-400" />
           <h2 className="text-2xl font-bold mb-4">No Christmas PFP Yet</h2>
           <p className="text-gray-400 mb-6">
-            You haven&apos;t minted your festive profile picture yet. Head to the Home tab to create your first Christmas PFP!
+            You haven&apos;t created your festive profile picture yet. Head to the Home tab to create your first Christmas PFP!
           </p>
           <div className="inline-flex items-center gap-2 text-sm text-blue-400">
             <span>💡</span>
-            <span>Mint costs 0.1 USDC and earns you 2 points</span>
+            <span>Create costs 0.1 USDC and earns you 2 points</span>
           </div>
         </div>
       ) : (
@@ -148,6 +148,18 @@ export function ProfileTab() {
                 <Share2 className="w-4 h-4" />
                 Cast to Farcaster
               </button>
+              <button
+                onClick={() => {
+                  const text = 'Staying Based this Christmas with my Basemax Cap! 🎄⛓️ Onchain forever on @base';
+                  const url = 'https://farcaster.xyz/miniapps/Rh6KUvzlHqMp/based-christmas';
+                  const xShareUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+                  window.open(xShareUrl, '_blank', 'noopener,noreferrer');
+                }}
+                className="w-full px-4 py-3 bg-black hover:bg-gray-900 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 border border-white/20"
+              >
+                <X className="w-4 h-4" />
+                Share on X
+              </button>
             </div>
 
 
@@ -165,7 +177,7 @@ export function ProfileTab() {
                 {points.toString()}
               </p>
               <p className="text-sm text-gray-400 mt-2">
-                Earned from minting Christmas PFPs
+                Earned for creating Christmas PFPs
               </p>
             </div>
 
@@ -173,7 +185,7 @@ export function ProfileTab() {
             <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/20 rounded-2xl p-6">
               <div className="flex items-center gap-3 mb-2">
                 <Gift className="w-6 h-6 text-purple-400" />
-                <h3 className="text-lg font-bold">Total Mints</h3>
+                <h3 className="text-lg font-bold">Total Created</h3>
               </div>
               <p className="text-4xl font-bold text-purple-400">
                 {mintCount.toString()}
@@ -200,13 +212,13 @@ export function ProfileTab() {
           <div className="space-y-2">
             <div className="text-purple-400 font-semibold">🎄 Spread The Joy</div>
             <p className="text-gray-400">
-              Download and share your festive PFP across all your social profiles
+              share your festive PFP across all your social profiles
             </p>
           </div>
           <div className="space-y-2">
             <div className="text-green-400 font-semibold">🎯 Collect Rewards</div>
             <p className="text-gray-400">
-              Stack up points with each mint - the more festive, the merrier!
+              Stack up points with each created - the more festive, the merrier!
             </p>
           </div>
         </div>

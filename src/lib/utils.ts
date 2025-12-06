@@ -49,7 +49,7 @@ export function getMiniAppEmbedMetadata(ogImageUrl?: string) {
     button: {
       title: APP_BUTTON_TEXT,
       action: {
-        type: 'launch_frame',
+        type: 'launch_Based_Christmas_Cap',
         name: APP_NAME,
         url: APP_URL,
         splashImageUrl: APP_SPLASH_URL,

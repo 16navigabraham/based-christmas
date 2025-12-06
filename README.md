@@ -1,14 +1,14 @@
 # 🎄 Based Christmas - Christmas Cap PFP Mini App
 
-A festive Web3 Farcaster Mini App built on Base that lets users add a blue Christmas cap to their profile picture, mint it as an on-chain PFP, and earn points!
+A festive Web3 Farcaster Mini App built on Base that lets users add a blue Christmas cap to their profile picture, create it as an on-chain PFP, and earn points!
 
 ## ✨ Features
 
 - 🎅 **Upload & Transform**: Upload your PFP and automatically add a festive blue Christmas cap
 - 🔗 **IPFS Storage**: Securely store your capped PFP on IPFS via Pinata
-- ⛓️ **On-Chain Minting**: Mint your Christmas PFP on Base blockchain for 0.1 USDC
-- 🎯 **Points System**: Earn 2 points for every PFP minted
-- 📊 **User Dashboard**: View your stats, points, and minted PFPs
+- ⛓️ **On-Chain creating**: Create your Christmas PFP on Base blockchain for 0.1 USDC
+- 🎯 **Points System**: Earn 2 points for every PFP created
+- 📊 **User Dashboard**: View your stats, points, and created PFPs
 - 🔐 **Farcaster Auth**: Seamless authentication using Farcaster accounts
 - 💰 **Multi-Wallet Support**: Compatible with EVM and Solana wallets
 - 📱 **Mobile Responsive**: Works perfectly on all devices
@@ -32,7 +32,7 @@ A festive Web3 Farcaster Mini App built on Base that lets users add a blue Chris
 - Farcaster account
 - Neynar API key
 - Pinata account (for IPFS)
-- Base wallet with USDC (for minting)
+- Base wallet with USDC (for creating)
 
 ### Installation
 
@@ -112,10 +112,10 @@ A festive Web3 Farcaster Mini App built on Base that lets users add a blue Chris
 The `ChristmasCapPFP` contract is deployed on Base mainnet:
 
 ### Contract Features
-- **Price**: 0.1 USDC per mint
-- **Points**: 2 points awarded per mint
+- **Price**: 0.1 USDC per create
+- **Points**: 2 points awarded per create
 - **Storage**: Stores capped image IPFS URL
-- **Events**: Emits `PFPMinted` and `PointsAwarded` events
+- **Events**: Emits `PFPCreated` and `PointsAwarded` events
 - **Owner Functions**: `withdraw()` to collect USDC
 
 ### Contract Address
@@ -124,18 +124,7 @@ Update `NEXT_PUBLIC_CHRISTMAS_CAP_CONTRACT` in `.env.local` with your deployed c
 ### Contract Functions
 
 ```solidity
-// Mint a Christmas PFP (requires 0.1 USDC approval first)
-function mintChristmasCap(string memory _cappedImage) external
 
-// View user stats
-function getUserStats(address _user) external view returns (
-    string memory pfp,
-    uint256 points,
-    uint256 mintCount
-)
-
-// Owner withdraw collected USDC
-function withdraw() external onlyOwner
 ```
 
 ## 🎨 How It Works
@@ -145,7 +134,7 @@ function withdraw() external onlyOwner
 3. **Connect Wallet**: User connects their wallet (EVM or Solana)
 4. **IPFS Upload**: Capped image is uploaded to IPFS via Pinata
 5. **Approve USDC**: User approves 0.1 USDC to the contract
-6. **Mint**: Contract mints the PFP and awards 2 points
+6. **Create**: Contract creates the PFP and awards 2 points
 7. **Success**: User can download and share their festive PFP!
 
 ## 🏛️ Project Structure
@@ -188,8 +177,8 @@ Handles drag-and-drop or click-to-upload functionality for user PFPs.
 ### CapPreview
 Renders the uploaded image with the blue Christmas cap overlay using Canvas API.
 
-### MintFlow
-Manages the complete minting process:
+### CreateFlow
+Manages the complete creating process:
 1. IPFS upload
 2. USDC approval
 3. Contract interaction
@@ -198,8 +187,8 @@ Manages the complete minting process:
 ### UserDashboard
 Displays user statistics:
 - Total points earned
-- Number of PFPs minted
-- Latest minted PFP preview
+- Number of PFPs created
+- Latest created PFP preview
 
 ## 🔧 Development
 

@@ -73,7 +73,7 @@ export function UserDashboard({ address }: UserDashboardProps) {
                   <span className="text-2xl">#</span>
                   <div>
                     <div className="text-xl font-bold text-green-400">{mintCount.toString()}</div>
-                    <div className="text-xs text-gray-400">Mints</div>
+                    <div className="text-xs text-gray-400">Creates</div>
                   </div>
                 </div>
               </div>
@@ -101,7 +101,7 @@ export function UserDashboard({ address }: UserDashboardProps) {
       </div>
       
       <div className="mt-4 text-center text-sm text-gray-400">
-        🎄 Earn 2 points per mint!
+        🎄 Earn 2 points per create!
       </div>
     </div>
   );

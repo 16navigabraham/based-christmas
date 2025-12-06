@@ -111,7 +111,7 @@ export function HomeTab() {
          Add the Basemax Cap to Your PFP 🎄
         </h1>
         <p className="text-base md:text-lg text-gray-300 max-w-2xl mx-auto">
-          Upload your profile picture, get a festive basemax Christmas cap overlay, and mint it on-chain for just 0.1 USDC!
+          Upload your profile picture, get a festive basemax Christmas cap overlay, and create it on-chain for just 0.1 USDC!
         </p>
       </div>
 
@@ -147,7 +147,7 @@ export function HomeTab() {
                       onClick={handleProceedToMint}
                       className="px-6 py-3 bg-blue-500 hover:bg-blue-600 rounded-lg font-medium transition-colors flex items-center gap-2"
                     >
-                      Proceed to Mint
+                      Proceed to Create
                       <ArrowRight className="w-4 h-4" />
                     </button>
                   )}
@@ -157,7 +157,7 @@ export function HomeTab() {
 
             {currentStep === 'mint' && originalImage && cappedBlob && (
               <div className="space-y-6">
-                <h2 className="text-2xl font-bold text-center">Step 3: Mint Your Christmas PFP</h2>
+                <h2 className="text-2xl font-bold text-center">Step 3: Create Your Christmas PFP</h2>
                 <MintFlow 
                   originalImage={originalImage}
                   cappedBlob={cappedBlob}
