@@ -73,7 +73,7 @@ export function CapPreview({ originalImage, onProcessed }: CapPreviewProps) {
       }
     }
 
-    const debounce = setTimeout(processImage, 300);
+    const debounce = setTimeout(processImage, 100);
 
     return () => {
       cancelled = true;
