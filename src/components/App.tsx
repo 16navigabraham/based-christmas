@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useMiniApp } from "@neynar/react";
 import { Header } from "~/components/ui/Header";
 import { Footer } from "~/components/ui/Footer";
 import { HomeTab, ProfileTab } from "~/components/ui/tabs";
 import { USE_WALLET } from "~/lib/constants";
 import { useNeynarUser } from "../hooks/useNeynarUser";
+import { SeasonModal } from "~/components/ui/SeasonModal";
+import { isChristmasSeason } from "~/lib/seasonCheck";
 
 // --- Types ---
 export enum Tab {
@@ -62,7 +64,24 @@ export default function App(
   // --- Neynar user hook ---
   const { user: neynarUser } = useNeynarUser(context || undefined);
 
+  // --- Season check state ---
+  const [isSeasonActive, setIsSeasonActive] = useState(true);
+
   // --- Effects ---
+  /**
+   * Check if we're in the Christmas season (December 1-25)
+   */
+  useEffect(() => {
+    setIsSeasonActive(isChristmasSeason());
+    
+    // Check every hour in case the date changes while app is open
+    const interval = setInterval(() => {
+      setIsSeasonActive(isChristmasSeason());
+    }, 60 * 60 * 1000); // Check every hour
+
+    return () => clearInterval(interval);
+  }, []);
+
   /**
    * Sets the initial tab to "home" when the SDK is loaded.
    * 
@@ -98,6 +117,9 @@ export default function App(
         paddingRight: context?.client.safeAreaInsets?.right ?? 0,
       }}
     >
+      {/* Season Modal - shows when not in December 1-25 */}
+      <SeasonModal isOpen={!isSeasonActive} />
+
       {/* Header should be full width */}
       <Header neynarUser={neynarUser} />
 
@@ -106,9 +128,13 @@ export default function App(
         {/* Main title */}
         <h1 className="text-2xl font-bold text-center mb-4">{title}</h1>
 
-        {/* Tab content rendering */}
-        {currentTab === Tab.Home && <HomeTab />}
-        {currentTab === Tab.Profile && <ProfileTab />}
+        {/* Tab content rendering - only show if season is active */}
+        {isSeasonActive && (
+          <>
+            {currentTab === Tab.Home && <HomeTab />}
+            {currentTab === Tab.Profile && <ProfileTab />}
+          </>
+        )}
 
         {/* Footer with navigation */}
         <Footer activeTab={currentTab as Tab} setActiveTab={setActiveTab} />
