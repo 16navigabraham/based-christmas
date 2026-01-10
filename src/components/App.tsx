@@ -128,13 +128,9 @@ export default function App(
         {/* Main title */}
         <h1 className="text-2xl font-bold text-center mb-4">{title}</h1>
 
-        {/* Tab content rendering - only show if season is active */}
-        {isSeasonActive && (
-          <>
-            {currentTab === Tab.Home && <HomeTab />}
-            {currentTab === Tab.Profile && <ProfileTab />}
-          </>
-        )}
+        {/* Tab content rendering - HomeTab only available during season, ProfileTab always accessible */}
+        {currentTab === Tab.Home && isSeasonActive && <HomeTab />}
+        {currentTab === Tab.Profile && <ProfileTab />}
 
         {/* Footer with navigation */}
         <Footer activeTab={currentTab as Tab} setActiveTab={setActiveTab} />
