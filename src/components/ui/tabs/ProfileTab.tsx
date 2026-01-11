@@ -205,7 +205,7 @@ export function ProfileTab() {
           <div className="space-y-2">
             <div className="text-blue-400 font-semibold">✨ Forever Festive</div>
             <p className="text-gray-400">
-              Your Christmas moment lives forever on the blockchain - no wrapping paper required!
+              Your magical Christmas moment sparkles eternally on the blockchain - Santa approved! 🎅✨
             </p>
           </div>
           <div className="space-y-2">
@@ -217,7 +217,7 @@ export function ProfileTab() {
           <div className="space-y-2">
             <div className="text-green-400 font-semibold">🎯 Collect Rewards</div>
             <p className="text-gray-400">
-              Stack up points with each created - the more festive, the merrier!
+              Ho ho ho! Earn jolly points with every creation - the more you mint, the merrier your Christmas!
             </p>
           </div>
         </div>

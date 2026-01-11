@@ -111,7 +111,7 @@ export function HomeTab() {
          Add the Basemax Cap to Your PFP 🎄
         </h1>
         <p className="text-base md:text-lg text-gray-300 max-w-2xl mx-auto">
-          Upload your profile picture, get a festive basemax Christmas cap overlay, and create it on-chain for just 0.1 USDC!
+          Ho ho ho! Upload your profile picture, get a jolly basemax Christmas cap overlay, and spread the festive cheer on-chain for just 0.1 USDC! 🎅✨
         </p>
       </div>
 
@@ -130,7 +130,7 @@ export function HomeTab() {
 
             {currentStep === 'preview' && originalImage && (
               <div className="space-y-6">
-                <h2 className="text-2xl font-bold text-center">Step 2: Preview Your Festive PFP</h2>
+                <h2 className="text-2xl font-bold text-center">Step 2: Ho Ho Ho! Preview Your Festive PFP! 🎅</h2>
                 <CapPreview 
                   originalImage={originalImage} 
                   onProcessed={handleProcessed}
@@ -157,7 +157,7 @@ export function HomeTab() {
 
             {currentStep === 'mint' && originalImage && cappedBlob && (
               <div className="space-y-6">
-                <h2 className="text-2xl font-bold text-center">Step 3: Create Your Christmas PFP</h2>
+                <h2 className="text-2xl font-bold text-center">Step 3: Ho Ho Ho! Let's Create Your Festive PFP! 🎅</h2>
                 <MintFlow 
                   originalImage={originalImage}
                   cappedBlob={cappedBlob}
