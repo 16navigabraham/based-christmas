@@ -5,7 +5,6 @@ import { useAccount, useConnect } from 'wagmi';
 import { ImageUpload } from '../christmas/ImageUpload';
 import { CapPreview } from '../christmas/CapPreview';
 import { MintFlow } from '../christmas/MintFlow';
-import { UserDashboard } from '../../christmas/UserDashboard';
 import { ArrowRight, Wallet } from 'lucide-react';
 
 type FlowStep = 'upload' | 'preview' | 'mint' | 'dashboard';
@@ -80,7 +79,7 @@ function ConnectWalletSection() {
  * and mint it on-chain for 0.1 USDC.
  */
 export function HomeTab() {
-  const { address, isConnected } = useAccount();
+  const { isConnected } = useAccount();
   const [currentStep, setCurrentStep] = useState<FlowStep>('upload');
   const [originalImage, setOriginalImage] = useState<File | null>(null);
   const [cappedBlob, setCappedBlob] = useState<Blob | null>(null);
@@ -157,7 +156,7 @@ export function HomeTab() {
 
             {currentStep === 'mint' && originalImage && cappedBlob && (
               <div className="space-y-6">
-                <h2 className="text-2xl font-bold text-center">Step 3: Ho Ho Ho! Let's Create Your Festive PFP! 🎅</h2>
+                <h2 className="text-2xl font-bold text-center">Step 3: Ho Ho Ho! Let&apos;s Create Your Festive PFP! 🎅</h2>
                 <MintFlow 
                   originalImage={originalImage}
                   cappedBlob={cappedBlob}

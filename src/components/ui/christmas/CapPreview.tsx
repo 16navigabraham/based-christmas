@@ -79,7 +79,7 @@ export function CapPreview({ originalImage, onProcessed }: CapPreviewProps) {
       cancelled = true;
       clearTimeout(debounce);
     };
-  }, [originalImage, capX, capY, capSize, capRotation]);
+  }, [originalImage, capX, capY, capSize, capRotation, onProcessed]);
 
   const handleReset = () => {
     setCapX(50);

@@ -1,10 +1,9 @@
 "use client";
 
-import { useState } from 'react';
 import { useAccount, useReadContract } from 'wagmi';
 import { CHRISTMAS_CAP_ABI, CHRISTMAS_CAP_CONTRACT_ADDRESS } from '~/lib/contracts';
 import { ipfsToHttp } from '~/lib/ipfs';
-import { Download, Gift, Trophy, Camera, Share2, X } from 'lucide-react';
+import { Gift, Trophy, Camera, Share2, X } from 'lucide-react';
 import { sdk } from '@farcaster/miniapp-sdk';
 
 /**
@@ -28,12 +27,6 @@ export function ProfileTab() {
       enabled: !!address && isConnected,
     },
   });
-
-  const handleSaveOrShare = () => {
-    if (!userStats || !userStats[0]) return;
-    const imageUrl = ipfsToHttp(userStats[0]);
-    window.open(imageUrl, '_blank', 'noopener,noreferrer');
-  };
 
   if (!isConnected) {
     return (

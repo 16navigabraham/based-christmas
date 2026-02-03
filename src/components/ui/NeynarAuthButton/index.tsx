@@ -543,7 +543,7 @@ export function NeynarAuthButton() {
 
       handleSignerFlow();
     }
-  }, [message, signature]); // Simplified dependencies
+  }, [message, signature, context?.client, createSigner, fetchAllSigners, generateSignedKeyRequest, isSignerFlowRunning, startPolling, useMiniappFlow]);
 
   // Miniapp flow using NextAuth
   const handleMiniappSignIn = useCallback(async () => {

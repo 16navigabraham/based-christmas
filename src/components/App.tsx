@@ -5,7 +5,6 @@ import { useMiniApp } from "@neynar/react";
 import { Header } from "~/components/ui/Header";
 import { Footer } from "~/components/ui/Footer";
 import { HomeTab, ProfileTab } from "~/components/ui/tabs";
-import { USE_WALLET } from "~/lib/constants";
 import { useNeynarUser } from "../hooks/useNeynarUser";
 import { SeasonModal } from "~/components/ui/SeasonModal";
 import { isChristmasSeason } from "~/lib/seasonCheck";

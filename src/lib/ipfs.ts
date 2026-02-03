@@ -3,7 +3,6 @@
  */
 
 const PINATA_JWT = process.env.NEXT_PUBLIC_PINATA_JWT || '';
-const PINATA_GATEWAY = process.env.NEXT_PUBLIC_PINATA_GATEWAY || 'https://gateway.pinata.cloud';
 
 /**
  * Uploads an image to IPFS via Pinata

@@ -28,7 +28,6 @@ export function MintFlow({ originalImage, cappedBlob }: MintFlowProps) {
   const { address, isConnected } = useAccount();
   const [currentStep, setCurrentStep] = useState<FlowStep>('upload');
   const [error, setError] = useState<string | null>(null);
-  const [originalUrl, setOriginalUrl] = useState<string>('');
   const [cappedUrl, setCappedUrl] = useState<string>('');
 
   const { writeContract: approveUSDC, data: approveHash, isPending: isApproving } = useWriteContract();
@@ -167,11 +166,6 @@ export function MintFlow({ originalImage, cappedBlob }: MintFlowProps) {
       console.error('Mint error:', err);
       setError(err.message || 'Failed to create Christmas PFP');
     }
-  };
-
-  const handleDownload = () => {
-    const imageUrl = ipfsToHttp(cappedUrl);
-    window.open(imageUrl, '_blank', 'noopener,noreferrer');
   };
 
   const isProcessing = isApproving || isApproveTxLoading || isMinting || isMintTxLoading;

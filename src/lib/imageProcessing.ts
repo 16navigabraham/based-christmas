@@ -31,7 +31,6 @@ function detectCapPosition(ctx: CanvasRenderingContext2D, imageData: ImageData, 
       if (isSkinTone) {
         if (y < topMostPixel) topMostPixel = y;
         leftSum += x;
-        rightSum += x;
         count++;
       }
     }
